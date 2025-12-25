@@ -1,0 +1,27 @@
+{
+    "office_name": "Union Dental Group",
+    "phone": "(714) 533-0900",
+    "address": "434 S Euclid St #100, Anaheim, CA 92802",
+    "hours": {
+        "Mon": "9am-5pm",
+        "Tue": "9am-5pm",
+        "Wed": "9am-5pm",
+        "Thu": "9am-5pm",
+        "Fri": "9am-5pm",
+        "Sat": "Closed",
+        "Sun": "Closed"
+    },
+    "services": [
+        "Dental implants (Consultation required)",
+        "Full mouth exam",
+        "Fillings",
+        "Extractions",
+        "Root canal Treatment",
+        "Routine cleaning", 
+        "Deep cleaning (scaling $ root planing)",
+        "Denture & partial denture",
+        "Braces"
+    ],
+    "insurance_note": "We accept various PPO dental plans, Denti-cal (Medi-cal). Please call to verify your coverage.",
+    "implant_note": "Our doctors have years of experience in dental implant surgery. A consultation and exam are required."
+}
