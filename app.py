@@ -67,5 +67,26 @@ def contact_post():
     conn.close()
     return render_template("contact.html", clinic=CLINIC, success=True)
 
+#----------------------------
+#-------ADMIN AUTH-----------
+#----------------------------
+
+def require_admin():
+    if not session.get("is_admin"):
+        abort(403)
+
+@app.get("/admin")
+def admin_login_get():
+    return render_template("admin_login.html", clinic=CLINIC)
+
+@app.post("/admin")
+def admin_login_post():
+    password = request.form.get("password", "")
+    if password and password == os.environ.get("ADMIN_PASSWORD", "changeme"):
+        session["is_admin"] = True
+        return redirect(url_for("admin_requests"))
+    return render_template("admin_login.html", clinic=CLINIC, error="Incorrect password.")
+
+
 if __name__ in "__main__":
     app.run(debug=True)
