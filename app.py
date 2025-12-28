@@ -87,6 +87,31 @@ def admin_login_post():
         return redirect(url_for("admin_requests"))
     return render_template("admin_login.html", clinic=CLINIC, error="Incorrect password.")
 
+@app.get("/admin/requests")
+def admin_requests():
+    require_admin()
+    with get_conn() as conn:
+        rows = conn.execute("""
+            SELECT * FROM appointment_requests ORDER BY created_at DESC LIMIT 50
+        """).fetchall()
+    return render_template("admin_requests.html", clinic=CLINIC, rows=rows)
+
+@app.post("/admin/requests/<int:req_id>/status")
+def admin_update_status(req_id: int):
+    require_admin()
+    new_status = request.form.get("status", "new")
+    if new_status not in ("new", "contacted", "closed"):
+        new_status = "new"
+    
+    with get_conn() as conn:
+        conn.execute("UPDATE appointment_requests SET status=? WHERE id=?", (new_status, req_id))
+        conn.commit()
+    
+    return redirect(url_for("admin_requests"))
+
+
+
+
 
 if __name__ in "__main__":
     app.run(debug=True)
