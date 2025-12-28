@@ -5,9 +5,10 @@ from pathlib import Path
 
 DB_PATH = Path("data.sqlite3")
 
-def get_conn() -> sqlite3.Connection:
+def get_conn():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
+    return conn
 
 def init_db() -> None:
     conn = get_conn()
