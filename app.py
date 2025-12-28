@@ -118,15 +118,127 @@ def admin_logout():
 # CHATBOT safety + FAQ fallback
 #------------------------------
 EMERGENCY_KEYWORDS = [
-    "controlled bleeding", "bleeding won't stop", "can't stop bleeding", "bleeding a lot"
+    "uncontrolled bleeding", "bleeding won't stop", "can't stop bleeding", "bleeding a lot"
     "can't breathe", "difficulty breathing", "trouble breathing", "hard to breathe",
     "trouble swallowing", "difficulty swallowing", "choking",
     "severe pain", "fever", "severe swelling", "facial swelling", "constant pain", "dying"
 ]
 
 def is_emergency(msg: str) -> bool:
-    msg = msg.lower()
-    return any(k in msg for k in EMERGENCY_KEYWORDS)
+    m = msg.lower()
+    return any(k in m for k in EMERGENCY_KEYWORDS)
+
+# FAQ = [
+#     ("hour", "Our hours are: " + ", ".join([f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items()])),
+#     ("hours", "Our hours are: " + ", ".join([f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items()])),
+#     ("schedule", "Our hours are: " + ", ".join([f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items()])),
+#     ("address", f"Our address is {CLINIC['address']}."),
+#     ("location", f"Our address is {CLINIC['address']}."),
+#     ("Where is the office", f"Our address is {CLINIC['address']}."),
+#     ("Where's the office", f"Our address is {CLINIC['address']}."),
+#     ("Where is your office", f"Our address is {CLINIC['address']}."),
+#     ("Where's your office", f"Our address is {CLINIC['address']}."),
+#     ("phone", f"You can call us at {CLINIC['phone']}."),
+#     ("implant", CLINIC["implant_note"]),
+#     ("implants", CLINIC["implant_note"]),
+#     ("insurance", CLINIC["insurance"]),
+#     ("service", f"Our services include: {CLINIC['insurance']}")
+# ]
+
+FAQ = [
+    {
+        "name": "hours",
+        "patterns": ["hour", "hours", "schedule", "open", "opening"],
+        "response": lambda: (
+            "Our hours are: " +
+            ", ".join(f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items())
+        )
+    },
+    {
+        "name": "location",
+        "patterns": [
+            "address", "location",
+            "where is the office", "where's the office",
+            "where is your office", "where's your office"
+        ],
+        "response": lambda: f"Our address is {CLINIC['address']}."
+    },
+    {
+        "name": "phone",
+        "patterns": ["phone", "call", "number", "contact"],
+        "response": lambda: f"You can call us at {CLINIC['phone']}."
+    },
+    {
+        "name": "insurance",
+        "patterns": ["insurance", "coverage", "accept insurance"],
+        "response": lambda: CLINIC["insurance"]
+    },
+    {
+        "name": "implants",
+        "patterns": ["implant", "implants"],
+        "response": lambda: CLINIC["implant_note"]
+    },
+    {
+        "name": "services",
+        "patterns": [
+            "services", "treatments", "what do you offer",
+            "what services", "procedures"
+        ],
+        "response": lambda: (
+            "We offer the following services:\n- " +
+            "\n- ".join(CLINIC["services"])
+        )
+    }
+]
+
+def faq_reply(msg: str):
+    m = msg.lower()
+    for intent in FAQ:
+        for pattern in intent["patterns"]:
+            if pattern in m:
+                return intent
+    return None
+
+@app.post("/api/chat")
+def api_chat():
+    data = request.get_json(silent=True) or {}
+    user_msg = (data.get("message") or "").strip()
+
+    if not user_msg:
+        return jsonify({"reply": "Please type the question and I'll help."})
+    
+    # Emergency
+    if is_emergency(user_msg):
+        return jsonify({"reply": 
+            f"If this is urgent, please call us immediately at {CLINIC['phone']}."
+            "If you have uncontrolled bleeding, trouble breathing/swallowing or severe pain and swelling, please go to urgent care!"
+        })
+    
+    # Medical advice guardrail
+    diagnosis = any(w in user_msg.lower() for w in [
+        "diagnose", "do I have", "Should I", "pain", "infected", "infection", "swollen", "pus"
+    ])
+
+    if diagnosis:
+        return jsonify({"reply": 
+            "I can't provide medical advice or diagnosis. "
+            f"If you're concerned, please call us at {CLINIC['phone']} to make appointment for an exam."
+            "I can also help submit an appointment request from the Contact page."
+        })
+    
+    # FAQ fallback
+    ans = faq_reply(user_msg)
+    if ans:
+        return jsonify({"reply": ans['response']()})
+    
+    return jsonify({"reply": "Here are what I can help you with: "
+        "\n- hours"
+        "\n- location"
+        "\n- services"
+        "\n- insurance info"
+        "\n- appointment requests"
+        "\nHow can I help you?"
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
