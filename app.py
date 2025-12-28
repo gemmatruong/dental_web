@@ -109,7 +109,10 @@ def admin_update_status(req_id: int):
     
     return redirect(url_for("admin_requests"))
 
-
+@app.post("/admin/logout")
+def admin_logout():
+    session.clear()
+    return redirect(url_for("admin_login_get"))
 
 
 
