@@ -114,7 +114,19 @@ def admin_logout():
     session.clear()
     return redirect(url_for("admin_login_get"))
 
+#------------------------------
+# CHATBOT safety + FAQ fallback
+#------------------------------
+EMERGENCY_KEYWORDS = [
+    "controlled bleeding", "bleeding won't stop", "can't stop bleeding", "bleeding a lot"
+    "can't breathe", "difficulty breathing", "trouble breathing", "hard to breathe",
+    "trouble swallowing", "difficulty swallowing", "choking",
+    "severe pain", "fever", "severe swelling", "facial swelling", "constant pain", "dying"
+]
 
+def is_emergency(msg: str) -> bool:
+    msg = msg.lower()
+    return any(k in msg for k in EMERGENCY_KEYWORDS)
 
-if __name__ in "__main__":
+if __name__ == "__main__":
     app.run(debug=True)
