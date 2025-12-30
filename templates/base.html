@@ -17,4 +17,18 @@
             <a href="{{ url_for('contact_get') }}">Contact</a>
         </nav>
     </header>
+
+    <main class="container">
+        {%block content%}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div><strong>{{ clini.office_name }}</strong> • {{ clinic.phone }} • {{ clinic.address }}</div>
+            <div> class="disclaimer"
+                This website and chat assistant provide general information only and do not offer medical advice.
+                For urgent concerns, call the office or seek emergency care.
+            </div>
+        </div>
+    </footer>
 </body>
