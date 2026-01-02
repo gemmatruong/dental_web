@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>New Patient</h1>
+<ul>
+    <li>Please arrive 15 minutes early for your first visit</li>
+    <li>Please bring your ID with you to the appointnment.</li>
+    <li>Bring your insurance information (if applicable).</li>
+    <li>Bring a list of current medications (if applicable).</li>
+    <li>{{ clinic.insurance_note }}</li>
+</ul>
+{% endblock %}
