@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Dental Implants</h1>
+<p>{{ clinic.implant_note }}</p>
+<p>We'll review your desires, take any necessary X-rays, provide and discuss options. A consultation and exam are required.</p>
+<a class="btn" href="{{ url_for('contact_get') }}">Request an Implant Consultation</a>
+{% endblock %}
