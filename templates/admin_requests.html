@@ -7,3 +7,34 @@
     </form>
 </div>
 
+<table class="table">
+    <thead>
+        <tr>
+            <th>Created</th><th>Name</th><th>Contact</th><th>Preferred</th><th>Service</th><th>Note</th><th>Status</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+    {% for r in rows %}
+        <tr>
+            <td>{{ r["created_at"] }}</td>
+            <td>{{ r["name"] }}</td>
+            <td>{{ r["contact"] }}</td>
+            <td>{{ r["preferred_times"] }}</td>
+            <td>{{ r["service"] }}</td>
+            <td>{{ r["note"] or "" }}</td>
+            <td>
+                <form method="post" action="/admin/requests/{{ r['id'] }}/status" class="inline">
+                    <select name="status">
+                        <option {% if r["status"]=="new" %}selected{% endif %}>new</option>
+                        <option {% if r["status"]=="contacted" %}slected{% endif %}>contacted</option>
+                        <option {% if r["status"]=="closed" %}selected{endif %}>closed</option>
+                    </select>
+                    <button class="btn tiny" type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
