@@ -1,0 +1,10 @@
+body { font-family: system-uni, Arial; margin:0; color: #111; }
+.container { max-width:960px; margin:0 auto; padding: 16px; }
+.nav { border-bottom: 1px solid #eee; background: #fff; position: sticky; top: 0; }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.logo {font-weight: 700; }
+nav a { margin-left: 12px; text-decoration: none; color: #111; }
+.hero { padding: 28px 0; }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-block; padding: 10px 14px; border: 1px solid #111; text-decoration: none; background: #111; color: #fff; border-radius: 10px; }
+.btn.secondary { background: #fff; color: #111; }
