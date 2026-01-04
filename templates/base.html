@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{{ clinic.office_name }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" 
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
 <body>
     <header class="nav">
@@ -33,7 +35,7 @@
     </footer>
 
     <!-- Chat box -->
-    <button if="chatToggle" class="chat-toggle">Chat</button>
+    <button if="chatToggle" class="chat-toggle" aria-label="Open chat"><i class="fa-solid fa-comment-dots"></i></button>
     <div id="chatBox" class="chat-box hidden">
         <div class="chat-header">
             <span>Chat Assistant</span>
