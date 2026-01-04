@@ -118,7 +118,7 @@ def admin_logout():
 # CHATBOT safety + FAQ fallback
 #------------------------------
 EMERGENCY_KEYWORDS = [
-    "uncontrolled bleeding", "bleeding won't stop", "can't stop bleeding", "bleeding a lot"
+    "uncontrolled bleeding", "bleeding won't stop", "can't stop bleeding", "bleeding a lot",
     "can't breathe", "difficulty breathing", "trouble breathing", "hard to breathe",
     "trouble swallowing", "difficulty swallowing", "choking",
     "severe pain", "fever", "severe swelling", "facial swelling", "constant pain", "dying"
@@ -127,23 +127,6 @@ EMERGENCY_KEYWORDS = [
 def is_emergency(msg: str) -> bool:
     m = msg.lower()
     return any(k in m for k in EMERGENCY_KEYWORDS)
-
-# FAQ = [
-#     ("hour", "Our hours are: " + ", ".join([f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items()])),
-#     ("hours", "Our hours are: " + ", ".join([f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items()])),
-#     ("schedule", "Our hours are: " + ", ".join([f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items()])),
-#     ("address", f"Our address is {CLINIC['address']}."),
-#     ("location", f"Our address is {CLINIC['address']}."),
-#     ("Where is the office", f"Our address is {CLINIC['address']}."),
-#     ("Where's the office", f"Our address is {CLINIC['address']}."),
-#     ("Where is your office", f"Our address is {CLINIC['address']}."),
-#     ("Where's your office", f"Our address is {CLINIC['address']}."),
-#     ("phone", f"You can call us at {CLINIC['phone']}."),
-#     ("implant", CLINIC["implant_note"]),
-#     ("implants", CLINIC["implant_note"]),
-#     ("insurance", CLINIC["insurance"]),
-#     ("service", f"Our services include: {CLINIC['insurance']}")
-# ]
 
 FAQ = [
     {
@@ -210,13 +193,13 @@ def api_chat():
     # Emergency
     if is_emergency(user_msg):
         return jsonify({"reply": 
-            f"If this is urgent, please call us immediately at {CLINIC['phone']}."
+            f"If this is urgent, please call us immediately at {CLINIC['phone']}. "
             "If you have uncontrolled bleeding, trouble breathing/swallowing or severe pain and swelling, please go to urgent care!"
         })
     
     # Medical advice guardrail
     diagnosis = any(w in user_msg.lower() for w in [
-        "diagnose", "do I have", "Should I", "pain", "infected", "infection", "swollen", "pus"
+        "do i have", "should i", "is this", "am i", "infected", "infection", "swollen", "pus"
     ])
 
     if diagnosis:
@@ -231,7 +214,7 @@ def api_chat():
     if ans:
         return jsonify({"reply": ans['response']()})
     
-    return jsonify({"reply": "Here are what I can help you with: "
+    return jsonify({"reply": "Here is what I can help you with: "
         "\n- hours"
         "\n- location"
         "\n- services"

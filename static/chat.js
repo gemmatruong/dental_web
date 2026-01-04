@@ -23,11 +23,11 @@
         try {
             const result = await fetch("/api/chat", {
                 method: "POST",
-                headers: {"Content-Type": "application/jason"},
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: text })
             });
             const data = await result.json();
-            addMessage(data.reply || "Sorrt, something went wrong.", "bot");
+            addMessage(data.reply || "Sorry, something went wrong.", "bot");
         } catch(e) {
             addMessage("Network error. Please try again or call the office.", "bot");
         }
@@ -41,5 +41,5 @@
 
     closeBtn.addEventListener("click", () => box.classList.add("hidden"));
     sendBtn.addEventListener("click", send);
-    input.addEventListener("keydown", (e) => { if (e.key === "Enter") send; });
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") send(); });
 })();
