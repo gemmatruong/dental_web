@@ -23,6 +23,25 @@ nav a { margin-left: 12px; text-decoration: none; color: #111; }
 .table th, .table td { border-bottom: 1px solid #eee; padding: 10px; vertical-align: top; }
 .row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .inline { display: inline-flex; gap:  8px; align-items: center; }
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+.review-card {
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+}
+
+.review-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid #f2f2f2;
+}
 
 /* Chat window */
 .chat-toggle { position: fixed; bottom: 16px; right: 16px;
