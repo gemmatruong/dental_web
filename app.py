@@ -182,7 +182,7 @@ def admin_reviews_upload():
     file.save(dest)
     return redirect(url_for("admin_reviews_get"))
 
-@app.post("admin/reviews/delete/<filename>")
+@app.post("/admin/reviews/delete/<filename>")
 def admin_reviews_delete(filename: str):
     require_admin()
     safe = secure_filename(filename)
