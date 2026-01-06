@@ -4,11 +4,20 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort
 from dotenv import load_dotenv
 from db import init_db, get_conn
+from pathlib import Path
+from werkzeug.utils import secure_filename
 
 # read .env file (environment file) and get values from it
 load_dotenv()
 
 app = Flask(__name__)
+
+# for later use in image uploads
+UPLOAD_DIR = Path("static/uploads/reviews")
+ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
+MAX_UPLOAD_MB = 8
+
+app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024  # 8MB limit
 
 # Get value of variable named FLASK_SECRET_KEY from .env file
 # otherwise the default string
@@ -19,6 +28,25 @@ with open("clinic_info.json", "r", encoding="utf-8") as f:
 
 # Initialize DB on startup
 init_db()
+
+#----------------------------
+#-------Reviews uploads------
+#----------------------------
+# Check if file is an image
+def allowed_file(filename: str) -> bool:
+    if "." not in filename:
+        return False
+    ext = filename.rsplit(".", 1)[1].lower()
+    return ext in ALLOWED_EXTENSIONS
+
+def list_review_images():
+    if not UPLOAD_DIR.exists():
+        return []
+    files = []
+    for p in sorted(UPLOAD_DIR.iterdir()):
+        if p.is_file() and p.suffix.lower().lstrip(".") in ALLOWED_EXTENSIONS:
+            files.append(p.name)
+    return files
 
 #----------------------------
 #-------WEBSITE PAGES--------
@@ -67,6 +95,11 @@ def contact_post():
     conn.close()
     return render_template("contact.html", clinic=CLINIC, success=True)
 
+@app.get("/reviews")
+def reviews_page():
+    images = list_review_images()
+    return render_template("reviews.html", clinic=CLINIC, images=images)
+
 #----------------------------
 #-------ADMIN AUTH-----------
 #----------------------------
@@ -108,6 +141,58 @@ def admin_update_status(req_id: int):
         conn.commit()
     
     return redirect(url_for("admin_requests"))
+
+@app.get("/admin/reviews")
+def admin_reviews_get():
+    require_admin()
+    images = list_review_images()
+    return render_template("admin_reviews.html", clinic=CLINIC, images=images)
+
+@app.post("/admin/reviews/uploads")
+def admin_reviews_upload():
+    require_admin()
+
+    if "image" not in request.files:
+        return redirect(url_for("admin_reviews_get"))
+    
+    file = request.files["images"]
+    if not file or file.filename == "":
+        return redirect(url_for("admin_reviews_get"))
+    
+    if not allowed_file(file.filename):
+        return render_template(
+            "admin_reviews.html",
+            clinic=CLINIC,
+            images=list_review_images(),
+            error="Only PNG, JPG, JPEG, or WEBP files are allowed."
+        )
+    UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+    safe = secure_filename(file.filename)   #remove weird characters
+
+    # Avoid overwriting existing files:
+    dest = UPLOAD_DIR / safe
+    if dest.exists():
+        stem = dest.stem
+        ext = dest.suffix
+        i = 2
+        while (UPLOAD_DIR / f"{stem}-{i}{ext}").exists():
+            i += 1
+            dest = UPLOAD_DIR / f"{stem}-{i}{ext}"
+    file.save(dest)
+    return redirect(url_for("admin_reviews_get"))
+
+@app.post("admin/reviews/delete/<filename>")
+def admin_reviews_delete(filename: str):
+    require_admin()
+    safe = secure_filename(filename)
+    target = UPLOAD_DIR / safe
+
+    # Safety check: ensure delete stays inside the upload folder
+    if target.exists() and target.is_file():
+        target.unlink()
+    
+    return redirect(url_for("admin_reviews_get"))
 
 @app.post("/admin/logout")
 def admin_logout():
