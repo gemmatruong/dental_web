@@ -2,6 +2,8 @@
     "office_name": "Union Dental Group",
     "phone": "(714) 533-0900",
     "address": "434 S Euclid St #100, Anaheim, CA 92802",
+    "email": "uniondentalgroups@gmail.com",
+    "fax": "(714) 533-0902",
     "hours": {
         "Mon": "9am-5pm",
         "Tue": "9am-5pm",
