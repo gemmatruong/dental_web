@@ -188,9 +188,12 @@ nav a {
 .msg { 
     display: inline-flex;
     align-items: center;
-    padding: 10px; 
-    border-radius: 12px; 
     white-space: pre-line;
+    padding: 8px 10px;
+    border-radius: 12px;
+    border: 1px solid #4682B4;
+    max-width: 75%;
+    line-height: 1.4;
 }
 .msg.user { 
     background-color: #4682B4;
@@ -226,5 +229,5 @@ nav a {
     font-size: 11px; 
     opacity: 0.75; 
     padding: 8px 12px; 
-    border-top: 1px solid #eee; 
+    border-top: 1px solid #89CFF0; 
 }

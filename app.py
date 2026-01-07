@@ -222,6 +222,11 @@ FAQ = [
             ", ".join(f"\n{day}: {hrs}" for day, hrs in CLINIC["hours"].items())
         )
     },
+        {
+        "name": "email",
+        "patterns": ["email"],
+        "response": lambda: f"Our email address is: {CLINIC['email']}"
+    },
     {
         "name": "location",
         "patterns": [
