@@ -216,7 +216,7 @@ def is_emergency(msg: str) -> bool:
 FAQ = [
     {
         "name": "hours",
-        "patterns": ["hour", "hours", "schedule", "open", "opening"],
+        "patterns": ["hour", "hours", "open", "opening"],
         "response": lambda: (
             "Our hours are: " +
             ", ".join(f"\n{day}: {hrs}" for day, hrs in CLINIC["hours"].items())
@@ -254,13 +254,22 @@ FAQ = [
     {
         "name": "services",
         "patterns": [
-            "services", "treatments", "what do you offer",
+            "service","services", "treatments", "what do you offer",
             "what services", "procedures"
         ],
         "response": lambda: (
             "We offer the following services:\n- " +
             "\n- ".join(CLINIC["services"])
         )
+    },
+    {
+        "name": "appointment",
+        "patterns": [
+            "appointment", "book", "schedule", "scheduled",
+            "visit", "see the dentist", "consult", "consultation"
+        ],
+        "response": lambda: ('To request an appointment, please use our <a href="/contact" target="_blank">Contact</a> page. '
+                             'If your prefer, you can also call the office.')
     }
 ]
 

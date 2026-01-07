@@ -9,7 +9,13 @@
     function addMessage(text, who) {
         const div = document.createElement("div");
         div.className = "msg " + (who === "user" ? "user" : "bot");
-        div.textContent = text;
+
+        if (who === "bot") {
+            div.innerHTML = text;
+        } 
+        else {
+            div.textContent = text;
+        }
         msgs.appendChild(div);
         msgs.scrollTop = msgs.scrollHeight;
     }
