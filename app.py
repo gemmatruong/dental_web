@@ -219,7 +219,7 @@ FAQ = [
         "patterns": ["hour", "hours", "schedule", "open", "opening"],
         "response": lambda: (
             "Our hours are: " +
-            ", ".join(f"{day}: {hrs}" for day, hrs in CLINIC["hours"].items())
+            ", ".join(f"\n{day}: {hrs}" for day, hrs in CLINIC["hours"].items())
         )
     },
     {
@@ -239,12 +239,12 @@ FAQ = [
     {
         "name": "insurance",
         "patterns": ["insurance", "coverage", "accept insurance"],
-        "response": lambda: CLINIC["insurance"]
+        "response": lambda: CLINIC['insurance']
     },
     {
         "name": "implants",
         "patterns": ["implant", "implants"],
-        "response": lambda: CLINIC["implant_note"]
+        "response": lambda: CLINIC["implant"]
     },
     {
         "name": "services",
@@ -299,14 +299,7 @@ def api_chat():
     if ans:
         return jsonify({"reply": ans['response']()})
     
-    return jsonify({"reply": "Here is what I can help you with: "
-        "\n- hours"
-        "\n- location"
-        "\n- services"
-        "\n- insurance info"
-        "\n- appointment requests"
-        "\nHow can I help you?"
-    })
+    return jsonify({"reply": "Here is what I can help you with: \n- hours\n- location\n- services\n- insurance info\n- appointment requests"})
 
 if __name__ == "__main__":
     app.run(debug=True)

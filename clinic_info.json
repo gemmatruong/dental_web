@@ -24,6 +24,6 @@
         "Denture & partial denture",
         "Braces"
     ],
-    "insurance_note": "We accept various PPO dental plans and Denti-cal (Medi-cal). Please call to verify your coverage.",
-    "implant_note": "Our doctors have years of experience in dental implant surgery. A consultation and exam are required."
+    "insurance": "We accept various PPO dental plans and Denti-cal (Medi-cal). Please call to verify your coverage.",
+    "implant": "Our doctors have years of experience in dental implant surgery. A consultation and exam are required."
 }
