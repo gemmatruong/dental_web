@@ -9,31 +9,59 @@ body {
     padding: 16px; 
 }
 .nav { 
-    border-bottom: 1px solid #eee; 
     background: #fff; 
-    position: sticky; 
-    top: 0; 
+    position: sticky;
+
 }
 .nav-inner { 
     display: flex; 
     align-items: center; 
     justify-content: space-between; 
+    width: 70%;
     gap: 16px; 
+    margin-left: 200px;
 }
-.logo {font-weight: 700; }
+nav a { 
+    /* margin-left: 12px; 
+    text-decoration: none; 
+    color: #111;  */
+    position: relative;
+    text-decoration: none;
+    color: #111;
+    font-weight: 500;
+    padding: 6px 0;
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+
+    width: 0;
+    height: 3px;
+
+    background: linear-gradient(90deg, #0a2d68, #3b82f6);
+    border-radius: 999px;
+
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+}
+
+nav a:hover::after,
+nav a.active::after {
+    width: 100%;
+}
+
 .logo-img {
     height: 100px;
     width: auto;
     display: block;
-    margin-block: 30px;
+    margin-block: 20px;
     margin-block-start: 10px;
     margin-left: 10px;
 }
-nav a { 
-    margin-left: 12px; 
-    text-decoration: none; 
-    color: #111; 
-}
+
 .hero { 
     padding: 28px 0; 
     color: #2d4977
