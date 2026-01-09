@@ -13,7 +13,12 @@
 </head>
 <body>
     <header class="nav">
-        <div class="logo">{{ clinic.office_name }}</div>
+        <a href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='uploads/images/full-logo.png')}}"
+                alt="Union Dental Group Logo"
+                class="logo-img">
+        </a>
+        
         <nav>
             <a href="{{ url_for('home') }}">Home</a>
             <a href="{{ url_for('services') }}">Services</a>

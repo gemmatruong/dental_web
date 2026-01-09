@@ -21,6 +21,14 @@ body {
     gap: 16px; 
 }
 .logo {font-weight: 700; }
+.logo-img {
+    height: 100px;
+    width: auto;
+    display: block;
+    margin-block: 30px;
+    margin-block-start: 10px;
+    margin-left: 10px;
+}
 nav a { 
     margin-left: 12px; 
     text-decoration: none; 
