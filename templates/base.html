@@ -13,23 +13,24 @@
 </head>
 <body>
     <header class="nav">
-        <a href="{{ url_for('home') }}">
-            <img src="{{ url_for('static', filename='uploads/images/full-logo.png')}}"
-                alt="Union Dental Group Logo"
-                class="logo-img">
-        </a>
+        <div class="nav-inner">
+            <!-- Logo -->
+            <a href="{{ url_for('home') }}" class="logo-wrap">
+                <img src="{{ url_for('static', filename='uploads/images/full-logo.png') }}"
+                    alt="Union Dental Group Logo"
+                    class="logo-img">
+            </a>
         
-        <nav>
-            <div class="nav-inner">
+            <!-- Navigation -->
+            <nav class="nav-links">
                 <a href="{{ url_for('home') }}">Home</a>
                 <a href="{{ url_for('services') }}">Services</a>
                 <a href="{{ url_for('implants') }}">Implants</a>
                 <a href="{{ url_for('new_patients') }}">New Patients</a>
                 <a href="{{ url_for('contact_get') }}">Contact</a>
                 <a href="{{ url_for('reviews_page') }}">Reviews</a>
-            </div>
-            
-        </nav>
+            </nav>
+        </div>
     </header>
 
     <main class="container">
