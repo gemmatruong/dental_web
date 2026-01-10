@@ -8,31 +8,79 @@ body {
     margin:0 auto; 
     padding: 16px; 
 }
-.nav { 
-    background: #fff; 
-    position: sticky;
 
+/* Header container */
+.nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+
+    background: linear-gradient(
+        180deg,
+        #d3f4f5 0%,
+        #b1d2f3 100%
+    );
+
+    box-shadow: 0 4px 12px rgba(10, 45, 104, 0.25);
 }
-.nav-inner { 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    width: 70%;
-    gap: 16px; 
-    margin-left: 200px;
+
+/* Accent top bar */
+.nav::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 3px;
+
+    background: linear-gradient(
+        90deg,
+        #0b3f6e,
+        rgb(63, 45, 12)
+    );
 }
-nav a { 
-    /* margin-left: 12px; 
-    text-decoration: none; 
-    color: #111;  */
+
+/* Inner layout */
+.nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Logo */
+.logo-img {
+    height: 60px;
+    margin-block: 10px;
+    width: auto;
+    display: block;
+}
+
+/* Navigation links */
+.nav-links {
+    padding: 16px 30px;
+    display: flex;
+    align-items: center;
+    gap: 50px;
+}
+
+.nav-links a {
     position: relative;
     text-decoration: none;
-    color: #111;
-    font-weight: 500;
+
+    font-size: 15px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+    color: rgb(63, 45, 12);
+
     padding: 6px 0;
 }
 
-nav a::after {
+/* Animated underline */
+.nav-links a::after {
     content: "";
     position: absolute;
     left: 50%;
@@ -41,30 +89,46 @@ nav a::after {
     width: 0;
     height: 3px;
 
-    background: linear-gradient(90deg, #0a2d68, #3b82f6);
-    border-radius: 999px;
+    background: linear-gradient(
+        90deg,
+        #0a2d68,
+        #3b82f6
+    );
 
+    border-radius: 999px;
     transform: translateX(-50%);
     transition: width 0.3s ease;
 }
 
-nav a:hover::after,
-nav a.active::after {
+.nav-links a:hover::after,
+.nav-links a.active::after {
     width: 100%;
 }
 
-.logo-img {
-    height: 100px;
-    width: auto;
-    display: block;
-    margin-block: 20px;
-    margin-block-start: 10px;
-    margin-left: 10px;
+.hero {
+    display: inline-block;
+    justify-content: center; /* Centers horizontally */
+    margin: 0;               /* Optional: removes default body margin if applied */
+    text-align: center;
 }
 
-.hero { 
-    padding: 28px 0; 
-    color: #2d4977
+
+.hero h1 {
+    color: #83c9f4;
+    font-weight: 1000;
+    font-size: 55px;
+    text-shadow: 
+    1px 1px 0 #2d4977, 
+    2px 2px 0 #2d4977, 
+    3px 3px 0 #2d4977, 
+    4px 4px 0 #2d4977;
+}
+.hero p {
+    padding-top: 0;
+    margin-top: 0;
+    color: #2d4977;
+    font-size: 20px;
+    font-weight: bold;
 }
 .cta-row { 
     display: flex; 
