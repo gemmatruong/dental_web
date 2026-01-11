@@ -106,29 +106,28 @@ body {
 }
 
 .hero {
-    display: inline-block;
-    justify-content: center; /* Centers horizontally */
-    margin: 0;               /* Optional: removes default body margin if applied */
     text-align: center;
 }
-
 
 .hero h1 {
     color: #83c9f4;
     font-weight: 1000;
     font-size: 55px;
     text-shadow: 
-    1px 1px 0 #2d4977, 
-    2px 2px 0 #2d4977, 
-    3px 3px 0 #2d4977, 
-    4px 4px 0 #2d4977;
+        1px 1px 0 #2d4977, 
+        2px 2px 0 #2d4977, 
+        3px 3px 0 #2d4977, 
+        4px 4px 0 #2d4977;
+    margin-top: 20px;
+    margin-bottom: 0;
+
 }
 .hero p {
-    padding-top: 0;
-    margin-top: 0;
     color: #2d4977;
     font-size: 20px;
-    font-weight: bold;
+    font-weight: 600;
+    font-style: italic;
+    margin: 0;
 }
 .cta-row { 
     display: flex; 
