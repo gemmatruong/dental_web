@@ -148,6 +148,7 @@ body {
     border-radius: 10px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
     font-weight: 500;
+    cursor: pointer;
 }
 .btn:hover {
     background-color: #82a1c0;
@@ -165,6 +166,49 @@ body {
 .about-us {
     display: block;
     line-height: 1.5;
+}
+
+/* Meet our dentists */
+.meet { margin-top: 26px; }
+.dentist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+}
+
+.dentist-card {
+    border: 1px solid #0b3f6e;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #83c9f4;
+}
+
+.dentist-photo {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+    border-bottom: 1px solid #eee;
+}
+
+.dentist-info {
+    padding: 12px;
+}
+
+.chips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 8px 0 10px;
+}
+
+.chip {
+    font-size: 16px;
+    border: 1px solid #0b3f6e;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: #b1d2f3;
 }
 
 

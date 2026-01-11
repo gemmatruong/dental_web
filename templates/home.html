@@ -21,6 +21,38 @@
     </p>
 </div>
 
+<section class="meet">
+    <h1>Meet Our Dentists</h1>
+
+    <div class="dentist-grid">
+        {% for d in clinic.dentists %}
+            <div class="dentist-card">
+                <img 
+                    class="dentist-photo"
+                    src="{{ url_for('static', filename='uploads/dentists/' ~d.photo) }}"
+                    alt="Photo of {{ d.name }}"
+                    loading="lazy">
+            </div>
+
+            <div class="dentist-info">
+                <h3>{{ d.name }}{% if d.title %}, {{ d.title }}{% endif %}</h3>
+
+                {% if d.specialties %}
+                    <div class="chips">
+                        {% for s in d.specialties %}
+                            <span class="chip">{{ s }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if d.bio %}
+                    <p>{{ d.bio }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
 
 <section class="grid">
     <div class="card"><h3>Cleaning</h3><p>Routine cleanings and preventive care.</p></div>
