@@ -138,6 +138,7 @@ body {
     gap: 15px;
     flex-wrap: wrap;
     justify-content: center;
+    margin-bottom: 40px;
 }
 .btn { 
     padding: 12px 20px; 
@@ -159,6 +160,15 @@ body {
 .btn.secondary:hover {
     background: #fadc6f; 
 }
+
+/* About us */
+.about-us {
+    display: block;
+    line-height: 1.5;
+}
+
+
+
 .grid { 
     display: grid; 
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
