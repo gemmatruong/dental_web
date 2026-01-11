@@ -25,5 +25,21 @@
         "Braces"
     ],
     "insurance": "We accept various PPO dental plans and Denti-cal (Medi-cal). Please call to verify your coverage.",
-    "implant": "Our doctors have years of experience in dental implant surgery. A consultation and exam are required."
+    "implant": "Our doctors have years of experience in dental implant surgery. A consultation and exam are required.",
+    "dentists": [
+        {
+            "name": "Dr. Boung Y Kim",
+            "title": "DDS",
+            "specialties": ["Implant Surgery", "Denture", "General Dentistry", "Braces"],
+            "bio": "Dr. Kim has years of experience in implant surgery with the admirable number of weekly surgeries. He focuses on patient's satisfaction, comfort, and long-term dental health.",
+            "photo":"dr-kim.webp"
+        },
+        {
+            "name": "Dr. Danny Do",
+            "title": "DDS",
+            "specialties": ["General Dentistry", "Implant Surgery"],
+            "bio": "Dr. Do is dedicated to gentle dentistry and helps patients feel informed and confident in their care. His excellent, gentle, and patient root canal treatment procedure is favorable by many patients",
+            "photo":"dr-do.jpg"
+        }
+    ]
 }
