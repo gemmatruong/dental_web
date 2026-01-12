@@ -60,6 +60,7 @@ body {
     margin-block: 10px;
     width: auto;
     display: block;
+    border-radius: 5px;
 }
 
 /* Navigation links */
@@ -169,31 +170,38 @@ body {
 }
 
 /* Meet our dentists */
-.meet { margin-top: 26px; }
+.meet { margin-top: px; }
 .dentist-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 14px;
-    margin-top: 14px;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 70px;
+    row-gap: 80px;
+    grid-auto-flow: dense;
 }
 
 .dentist-card {
-    border: 1px solid #0b3f6e;
-    border-radius: 16px;
-    overflow: hidden;
-    background: #83c9f4;
+    grid-column: 1;
+    grid-auto-flow: dense;
 }
 
 .dentist-photo {
     width: 100%;
-    height: 260px;
-    object-fit: cover;
-    display: block;
-    border-bottom: 1px solid #eee;
+    max-width: 350px;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
 }
 
 .dentist-info {
-    padding: 12px;
+    grid-column: 2;
+    align-self: center;
+}
+
+.dentist-card:nth-child(4n-1) {
+    grid-column: 2;
+}
+
+.dentist-card:nth-child(4n-1) + .dentist-info {
+    grid-column: 1;
 }
 
 .chips {
@@ -205,12 +213,27 @@ body {
 
 .chip {
     font-size: 16px;
-    border: 1px solid #0b3f6e;
+    border: 1px solid #111;
     padding: 4px 8px;
     border-radius: 999px;
-    background: #b1d2f3;
+    background: #4682B4;
+    color: wheat;
+    text-align: center;
 }
 
+
+/* Mobile layout */
+@media (max-width: 768px) {
+    .dentist-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dentist-card,
+    .dentist-info {
+        grid-column: 1 !important;
+        text-align: center;
+    }
+}
 
 
 .grid { 
