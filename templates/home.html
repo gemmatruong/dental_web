@@ -9,6 +9,7 @@
     </div>
 </section>
 
+<!-- About us -->
 <div class="about-us">
     <h1>About Us</h1>
     <p>
@@ -21,7 +22,43 @@
     </p>
 </div>
 
+<!-- Facilities image slider -->
+<section class="image-slider">
+    <div class="slider-wrapper">
+        <div class="facility">
+            <img 
+                id="facility-1" 
+                src="{{ url_for('static', filename='uploads/images/Union-Dental.webp') }}"
+                alt="Union Dental Group Outside">
+            <img 
+                id="facility-2" 
+                src="{{ url_for('static', filename='uploads/images/front-office.png') }}"
+                alt="Union Dental Group Front Office">
+            <img 
+                id="facility-3" 
+                src="{{ url_for('static', filename='uploads/images/exam-room.png') }}"
+                alt="Union Dental Group Exam Room">
+            <img 
+                id="facility-4" 
+                src="{{ url_for('static', filename='uploads/images/x-rays-room.png') }}"
+                alt="Union Dental Group X-rays Room">
+            <img 
+                id="facility-5" 
+                src="{{ url_for('static', filename='uploads/images/ct-scan.png') }}"
+                alt="Union Dental Group CT Scan machine">
+        </div>
 
+        <div class="slider-nav">
+            <a href="#facility-1"></a>
+            <a href="#facility-2"></a>
+            <a href="#facility-3"></a>
+            <a href="#facility-4"></a>
+            <a href="#facility-5"></a>
+        </div>
+    </div>
+</section>
+
+<!-- Meet our dentists -->
 <section class="meet">
     <h1>Meet Our Dentists</h1>
 
