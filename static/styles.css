@@ -207,8 +207,8 @@ body {
 }
 
 .slider-nav a {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
     background-color: #fff;
     opacity: 0.75;
@@ -280,7 +280,6 @@ body {
         text-align: center;
     }
 }
-
 
 .grid { 
     display: grid; 
