@@ -1,9 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Services</h1>
-<ul>
-    {% for s in clinic.services %}
-        <li>{{ s }}</li>
-    {% endfor %}
-</ul>
+
+<section class="services-section">
+    <h1>Our Services</h1>
+    
+    <div class="services-grid">
+        {% for s in clinic.services %}
+            <div class="service-card">
+                {% if s.image %}
+                    <img
+                        src="{{ url_for('static', filename='uploads/images/services/' ~s.image) }}"
+                        alt="{{ s.name }}"
+                        class="service-image"
+                >
+                {% else %}
+                    <div class="service-icon">&#x1F9B7;</div>
+                {% endif %}
+                
+                <h3 class="service-name">{{ s.name }}</h3>
+                <p class="service-desc">{{ s.description }}</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
 {% endblock %}
