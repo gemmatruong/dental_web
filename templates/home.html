@@ -91,4 +91,18 @@
     </div>
 </section>
 
+
+<!-- Insurance Info -->
+<section class="insurance">
+    <h1>Insurances</h1>
+    <p>{{ clinic.insurance }}</p>
+    <div class="insurance-info">
+        <img 
+            class="insurance-photo"
+            src="{{ url_for('static', filename='uploads/images/insurance-info.png') }}"
+            alt="PPO insurances"
+        >
+    </div>
+</section>
+
 {% endblock %}
