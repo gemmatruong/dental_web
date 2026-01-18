@@ -95,7 +95,7 @@
   <div class="check-grid">
     <!-- These match the list shown on the PDF :contentReference[oaicite:8]{index=8} -->
     {% set conditions = [
-      "AIDS/HIV +","Alzheimer’s Disease","Anemia","Arthritis/Gout","Artificial Heart Valve","Artificial Joint",
+      "AIDS/HIV +","Alzheimer's Disease","Anemia","Arthritis/Gout","Artificial Heart Valve","Artificial Joint",
       "Asthma","Blood Disease","Blood Transfusion","Cancer","Chest Pains","Circulatory Problems","Cortisone Medicine",
       "Diabetes","Epilepsy or Seizures","Fainting","Glaucoma","Heart Attack/Failure","Heart Murmur","Heart Pacemaker",
       "Heart Disease","Hemophilia","Hepatitis","High Blood Pressure","High Cholesterol","Hypoglycemia","Jaw pain / TMJ",
@@ -118,53 +118,68 @@
   </div>
 
   <h3>Medical Signature</h3>
-  <label>Signature of patient/parent/guardian* <input name="sig_medical" required></label>
-  <label>Date <input name="sig_medical_date" placeholder="YYYY-MM-DD"></label>
+  <label>Signature of patient/parent/guardian* <input name="sig_med" required></label>
+  <label>Date <input name="sig_med_date" placeholder="MM-DD-YY"></label>
 
 
   <h2>Insurance Information</h2>
 
-  <h3>Primary Insurance</h3>
-  <div class="two-col">
-    <label>Subscriber Name <input name="pi_subscriber"></label>
-    <label>Relationship to Subscriber
-      <div class="inline-radio">
-        <label><input type="radio" name="pi_rel" value="Self"> Self</label>
-        <label><input type="radio" name="pi_rel" value="Spouse"> Spouse</label>
-        <label><input type="radio" name="pi_rel" value="Child"> Child</label>
-        <label><input type="radio" name="pi_rel" value="Other"> Other</label>
-      </div>
-    </label>
-  </div>
-
-  <div class="two-col">
-    <label>Subscriber SSN / Member ID <input name="pi_member_id"></label>
-    <label>Group # <input name="pi_group"></label>
-  </div>
-
-
-  <h3>Signature on File</h3>
-  <label>Subscriber Name <input name="sig_ins_subscriber"></label>
-  <label>Relationship to the patient <input name="sig_ins_rel_patient"></label>
-  <label>Subscriber Signature <input name="sig_ins_signature"></label>
-  <label>Date <input name="sig_ins_date" placeholder="YYYY-MM-DD"></label>
-
-
-  <h2>Financial Policy Acknowledgement</h2>
-  <p class="muted">
-    Payment is due at the time of service. Please read and agree to the policy.
-  </p>
-
-  <label>Patient’s Name <input name="sig_fin_name"></label>
-  <label>Patient’s Signature <input name="sig_fin_signature"></label>
-  <label>Date <input name="sig_fin_date" placeholder="YYYY-MM-DD"></label>
-
-  <label>
-    <input type="checkbox" name="agree" required>
-    I have read the policies described and agree to abide by the terms.
+  <label>Do you have any Insurance?
+    <label><input type="radio" name="pi_has" value="Yes"> Yes</label>
+    <label><input type="radio" name="pi_has" value="No"> No</label>
   </label>
 
-  <button class="btn" type="submit">Submit Form</button>
+    <div id="pi_block" style="display:none;">
+        <label>Is the patient the subscriber?
+            <div class="inline-radio">
+                <label><input type="radio" name="pi_is_subscriber" value="Yes"> Yes</label>
+                <label><input type="radio" name="pi_is_subscriber" value="No"> No</label>
+            </div>
+        </label>
+
+        <div class="two-col">
+            <label>Insurance Company <input name="pi_company"></label>
+            <label>Member ID <input name="pi_member_id"></label>
+            <label>Group # <input name="pi_group"></label>
+        </div>
+
+        <div id="pi_subscriber_block" style="display:none;">
+            <div class="two-col">
+                <label>Subscriber Name <input name="pi_subscriber"></label>
+                <label>Subcriber DOB <input name="pi_dob" placeholder="MM-DD-YYYY"></label>
+            </div>
+
+            <label>Relationship to Subscriber
+                <div class="inline-radio">
+                    <label><input type="radio" name="pi_rel" value="Self"> Self</label>
+                    <label><input type="radio" name="pi_rel" value="Spouse"> Spouse</label>
+                    <label><input type="radio" name="pi_rel" value="Child"> Child</label>
+                    <label><input type="radio" name="pi_rel" value="Other"> Other</label>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <label>Patient's Name <input name="sig_ins_name"></label>
+    <label>Patient's Signature <input name="sig_ins"></label>
+    <label>Date <input name="sig_ins_date" placeholder="MM-DD-YY"></label>
+
+
+    <h2>Financial Policy Acknowledgement</h2>
+    <p class="muted">
+        Payment is due at the time of service. Please read and agree to the policy.
+    </p>
+
+    <label>Patient's Name <input name="sig_fin_name"></label>
+    <label>Patient's Signature <input name="sig_fin"></label>
+    <label>Date <input name="sig_fin_date" placeholder="MM-DD-YY"></label>
+
+    <label>
+        <input type="checkbox" name="agree" required>
+        I have read the policies described and agree to abide by the terms.
+    </label>
+
+    <button class="btn" type="submit">Submit Form</button>
 </form>
 {% endif %}
 
