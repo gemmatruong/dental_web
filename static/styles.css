@@ -566,3 +566,36 @@ body {
     transform: translateY(-6px);
     box-shadow: 0 18px 35px rgba(0,0,0,0.12);
 }
+
+/* NP registration form */
+.two-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+}
+
+.three-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.inline-radio {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.check-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 8px;
+}
+
+.check-item {
+    border: 1px solid #eee;
+    padding: 8px;
+    border-radius: 12px;
+    background: #fafafa;
+}
