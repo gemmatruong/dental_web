@@ -1,11 +1,15 @@
 # imports
 import json
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort, send_from_directory, current_app
 from dotenv import load_dotenv
 from db import init_db, get_conn
 from pathlib import Path
 from werkzeug.utils import secure_filename
+from datetime import datetime
+from utils.pdf_gen import generate_np_pdf
+from pdf_tools import fill_pdf_form
+
 
 # read .env file (environment file) and get values from it
 load_dotenv()
@@ -16,6 +20,10 @@ app = Flask(__name__)
 UPLOAD_DIR = Path("static/uploads/reviews")
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
 MAX_UPLOAD_MB = 8
+
+PDF_TEMPLATE = Path("static/uploads/forms/NP_form.pdf")
+FILLED_DIR = Path("filled_forms")
+FILLED_DIR.mkdir(parents=True, exist_ok=True)
 
 app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024  # 8MB limit
 
@@ -63,9 +71,131 @@ def services():
 def implants():
     return render_template("implants.html", clinic=CLINIC)
 
+
+
+CONDITION_MAP = {
+    "AIDS/HIV +": "heath_AIDS",
+    "Alzheimer's Disease": "heath_Alzheimer",
+    "Anemia": "health_Anemia",
+    "Arthritis/Gout": "health_Arthritis",
+    "Artificial Heart Valve": "health_AHV",
+    "Artificial Joint": "health_Artificial-joint",
+    "Asthma": "health_Asthma",
+    "Blood Disease": "health_Blood-disease",
+    "Blood Transfusion": "health_Blood-transfusion",
+    "Cancer": "health_Cancer",
+    "Chest Pains": "health_Chest-pains",
+    "Circulatory Problems": "heath_Circulatory-problem",
+    "Cortisone Medicine": "heath_Cortisone",
+    "Diabetes": "heath_Diabetes",
+    "Epilepsy or Seizures": "heath_Epilepsy",
+    "Fainting": "heath_Fainting",
+    "Glaucoma": "heath_Glaucoma",
+    "Heart Attack/Failure": "heath_Heart-attack",
+    "Heart Murmur": "heath_Heart-murmur",
+    "Heart Pacemaker": "heath_Heart-pacemaker",
+    "Heart Disease": "heath_Heart-disease",
+    "Hemophilia": "heath_Hemophilia",
+    "Hepatitis": "heath_Hepatitis",
+    "High Blood Pressure": "heath_HBP",
+    "High Cholesterol": "heath_HC",
+    "Hypoglycemia": "heath_Hypoglycemia",
+    "Jaw pain / TMJ": "heath_TMJ",
+    "Kidney Problems": "heath_Kidney-problems",
+    "Leukemia": "heath_Leukemia",
+    "Liver Disease": "heath_Liver-disease",
+    "Low Blood Pressure": "heath_LBP",
+    "Lung Disease": "heath_Lung-disease",
+    "Osteoporosis": "heath_Osteoporosis",
+    "Radiation Treatments": "heath_Radiation-treatment",
+    "Renal Dialysis": "heath_Renal-dialysis",
+    "Rheumatic Fever": "heath_Rheumatic-fever",
+    "Scarlet Fever": "heath_Scarlet-fever",
+    "Sickle Cell Disease": "heath_Sickle-cell",
+    "Sinus Trouble": "heath_Sinus-trouble",
+    "Stroke": "heath_Stroke",
+    "Thyroid Disease": "heath_Thyroid-disease",
+    "Tonsillitis": "heath_Tonsillitis",
+    "Tuberculosis": "heath_Tuberculosis",
+    "Ulcers": "heath_Ulcers",
+}
+
 @app.get("/new-patients")
 def new_patients():
-    return render_template("new_patients.html", clinic=CLINIC)
+    return render_template("new_patients.html", clinic=CLINIC, success=False)
+
+@app.post("/new-patients")
+def new_patients_submit():
+    form = request.form
+    try:
+        pdf_fields = {
+            # Patient info
+            "pt-firstname": form.get("p_first", ""),
+            "pt-lastname": form.get("p_last", ""),
+            "pt-midname": form.get("p_mi", ""),
+            "pt-address": form.get("p_address", ""),
+            "pt-city": form.get("p_city", ""),
+            "pt-state": form.get("p_state", ""),
+            "pt-zipcode": form.get("p_zip", ""),
+            "pt-cellphone": form.get("p_cell_phone", ""),
+            "pt-alt-phone": form.get("p_alt_phone", ""),
+            "pt-dob": form.get("p_dob", ""),
+            "pt-email": form.get("p_email", ""),
+
+            # Radios
+            "sex": form.get("p_sex", ""),
+            "marital-status": form.get("p_marital", ""),
+
+            # Medical
+            "serious-illness": form.get("m_serious", ""),
+            "phen-fen": form.get("m_phenfen", ""),
+            "pregnant": form.get("w_pregnant", ""),
+            "contraceptives": form.get("w_ocp", ""),
+            "nursing": form.get("w_nursing", ""),
+
+            # Textareas
+            "pt-medications": form.get("m_meds", ""),
+            "pt-allergies": form.get("m_allergies", ""),
+
+            # Signatures
+            "pt-med-sig": form.get("sig_med", ""),
+            "pt-med-date": form.get("sig_med_date", ""),
+
+            # Insurance
+            "sub-name": form.get("pi_subscriber", ""),
+            "sub-ID": form.get("pi_member_id", ""),
+            "sub-group": form.get("pi_group", ""),
+            "sub-dob": form.get("pi_dob", ""),
+            "sub-ins-name": form.get("pi_company", ""),
+            "sub-sig-name": form.get("sig_ins_name", ""),
+            "sub-signature": form.get("sig_ins", ""),
+            "sub-sig-rel": form.get("pi_rel", ""),
+            "sub-relationship": form.get("pi_rel", ""),
+            "sub-sig-date": form.get("sig_ins_date", ""),
+        }
+
+        # Handle condition checkboxes
+        for condition in form.getlist("m_conditions"):
+            pdf_field = CONDITION_MAP.get(condition)
+            if pdf_field:
+                pdf_fields[pdf_field] = "Yes"  # or "On" if your PDF uses On
+
+        # File name
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = f"{form.get('p_last','Patient')}_{form.get('p_first','')}"
+        output_pdf = FILLED_DIR / f"{safe_name}_{timestamp}.pdf"
+
+        fill_pdf_form(
+            input_pdf=PDF_TEMPLATE,
+            output_pdf=output_pdf,
+            field_values=pdf_fields
+        )
+
+        return render_template("new_patients.html", clinic=CLINIC, success=True)
+
+    except Exception as e:
+        return render_template("new_patients.html", clinic=CLINIC, error=str(e))
+
 
 @app.get("/contact")
 def contact_get():
@@ -99,6 +229,8 @@ def contact_post():
 def reviews_page():
     images = list_review_images()
     return render_template("reviews.html", clinic=CLINIC, images=images)
+
+
 
 #----------------------------
 #-------ADMIN AUTH-----------
