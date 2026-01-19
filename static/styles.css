@@ -568,34 +568,287 @@ body {
 }
 
 /* NP registration form */
+
+.np-form {
+    max-width: 1200px;
+    margin: 70px auto;
+    padding: 0 20px;
+}
+
+.np-header {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.np-header h1 {
+    font-size: 42px;
+    font-weight: 800;
+    color: #2d4977;
+    margin-bottom: 10px;
+}
+
+.np-header p {
+    font-size: 18px;
+    color: #5f7ea6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* =========================
+   FORM CONTAINER
+========================= */
+
+.form {
+    max-width: 1000px;        /* Ensures it shrinks on small screens */
+    margin: 0 auto;        /* Center horizontally */
+    background: #ffffff;
+    padding: 48px;
+    border-radius: 28px;
+    box-shadow: 0 30px 70px rgba(10, 45, 104, 0.08);
+}
+
+
+/* =========================
+   FORM SECTIONS
+========================= */
+
+/* Form sections */
+.form-section {
+    width: 850px;          /* Fixed width for each section */
+    max-width: 95%;        /* Shrinks nicely on smaller screens */
+    margin: 0 auto 40px;   /* Center horizontally and add spacing below */
+    padding: 32px;         /* Inner padding for a clean look */
+    background: #ffffff;   /* White background for sections */
+    border-radius: 20px;   /* Rounded corners */
+    box-shadow: 0 20px 50px rgba(10, 45, 104, 0.08); /* Soft shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect for interest */
+.form-section:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 30px 60px rgba(10, 45, 104, 0.12);
+}
+
+/* Section headers */
+.form-section h2 {
+    color: #114570;      /* Deep navy header */
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #f1e4d1; /* subtle underline */
+    padding-bottom: 8px;
+}
+
+/* Smaller headers */
+.form-section h3 {
+    color: #4682B4;
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+
+/* =========================
+   GRID SYSTEMS
+========================= */
+
 .two-col {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 12px;
+    gap: 18px;
 }
 
 .three-col {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
+    gap: 18px;
 }
+
+/* =========================
+   LABELS & INPUTS
+========================= */
+
+.form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d4977;
+}
+
+.form input,
+.form textarea,
+.form select {
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 14px;
+    border: 1px solid #dbe3f0;
+    background: #fff;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form textarea {
+    resize: vertical;
+}
+
+.form input::placeholder,
+.form textarea::placeholder {
+    color: #9ab0cc;
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+    outline: none;
+    border-color: #4682B4;
+    box-shadow: 0 0 0 4px rgba(70,130,180,0.15);
+}
+
+/* =========================
+   RADIO BUTTONS
+========================= */
 
 .inline-radio {
     display: flex;
-    gap: 12px;
     flex-wrap: wrap;
-    margin-top: 6px;
+    gap: 10px;
+    margin-top: 8px;
 }
+
+.inline-radio label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #f4f7fc;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.inline-radio label:hover {
+    background: #e8f1fb;
+}
+
+/* =========================
+   CHECKBOX GRID
+========================= */
 
 .check-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 8px;
+    gap: 12px;
+    margin-top: 12px;
 }
 
 .check-item {
-    border: 1px solid #eee;
-    padding: 8px;
-    border-radius: 12px;
-    background: #fafafa;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid #e3eaf4;
+    background: #fafcff;
+    font-size: 14px;
+}
+
+/* =========================
+   ALERTS
+========================= */
+
+.alert {
+    background: #ffe5e5;
+    color: #a33;
+    padding: 14px 18px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+}
+
+.success {
+    background: #e8f7ee;
+    color: #1f7a3a;
+    padding: 18px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 18px;
+}
+
+/* =========================
+   FINANCIAL AGREEMENT
+========================= */
+
+.muted {
+    font-size: 14px;
+    color: #6b86a6;
+    margin-bottom: 16px;
+}
+
+/* =========================
+   SUBMIT BUTTON
+========================= */
+
+button.btn {
+    display: block;
+    width: 100%;
+    max-width: 460px;
+    margin: 50px auto 0;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #4682B4, #83c9f4);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 20px 40px rgba(70,130,180,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px rgba(70,130,180,0.45);
+}
+
+/* =========================
+   NOTES SECTION
+========================= */
+
+.np-notes {
+    max-width: 1000px;
+    margin: 80px auto;
+    padding: 40px;
+    background: #f6f9fd;
+    border-radius: 24px;
+}
+
+.np-notes h2 {
+    font-size: 28px;
+    color: #2d4977;
+    margin-bottom: 20px;
+}
+
+.np-notes ul {
+    list-style: none;
+    padding: 0;
+}
+
+.np-notes li {
+    font-size: 16px;
+    padding-left: 26px;
+    margin-bottom: 14px;
+    position: relative;
+    color: #3d5f8a;
+}
+
+.np-notes li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #4682B4;
+    font-weight: 700;
 }
