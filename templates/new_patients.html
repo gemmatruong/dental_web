@@ -14,13 +14,14 @@
     <form class="form" method="post" action="{{ url_for('new_patients_submit') }}">
       <div class="form-section">
         <h2>Patient Information</h2>
-        <div class="two-col">
+        <div class="three-col">
           <label>First name* <input name="p_first" required></label>
           <label>Last name* <input name="p_last" required></label>
           <label>Middle Initial <input name="p_mi"></label>
         </div>
 
         <label>Address <input name="p_address"></label>
+        
         <div class="three-col">
           <label>City <input name="p_city"></label>
           <label>State <input name="p_state"></label>
