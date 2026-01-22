@@ -99,18 +99,58 @@
 
         <h3>Mark all that applies to you</h3>
         <div class="check-grid">
-          <!-- These match the list shown on the PDF :contentReference[oaicite:8]{index=8} -->
+          <!-- Health conditions -->
           {% set conditions = [
-            "AIDS/HIV +","Alzheimer's Disease","Anemia","Arthritis/Gout","Artificial Heart Valve","Artificial Joint",
-            "Asthma","Blood Disease","Blood Transfusion","Cancer","Chest Pains","Circulatory Problems","Cortisone Medicine",
-            "Diabetes","Epilepsy or Seizures","Fainting","Glaucoma","Heart Attack/Failure","Heart Murmur","Heart Pacemaker",
-            "Heart Disease","Hemophilia","Hepatitis","High Blood Pressure","High Cholesterol","Hypoglycemia","Jaw pain / TMJ",
-            "Kidney Problems","Leukemia","Liver Disease","Low Blood Pressure","Lung Disease","Osteoporosis",
-            "Radiation Treatments","Renal Dialysis","Rheumatic Fever","Scarlet Fever","Sickle Cell Disease","Sinus Trouble",
-            "Stroke","Thyroid Disease","Tonsillitis","Tuberculosis","Ulcers"
+            ("AIDS/HIV +", "health_AIDS"),
+            ("Alzheimer's Disease", "health_Alzheimer"),
+            ("Anemia", "health_Anemia"),
+            ("Arthritis/Gout", "health_Arthritis"),
+            ("Artificial Heart Valve", "health_AHV"),
+            ("Artificial Joint", "health_Artificial-joint"),
+            ("Asthma", "health_Asthma"),
+            ("Blood Disease", "health_Blood-disease"),
+            ("Blood Transfusion", "health_Blood-transfusion"),
+            ("Cancer", "health_Cancer"),
+            ("Chest Pains", "health_Chest-pains"),
+            ("Circulatory Problems", "health_Circulatory-problem"),
+            ("Cortisone Medicine", "health_Cortisone"),
+            ("Diabetes", "health_Diabetes"),
+            ("Epilepsy or Seizures", "health_Epilepsy"),
+            ("Fainting", "health_Fainting"),
+            ("Glaucoma", "health_Glaucoma"),
+            ("Heart Attack/Failure", "health_Heart-attack"),
+            ("Heart Murmur", "health_Heart-murmur"),
+            ("Heart Pacemaker", "health_Heart-pacemaker"),
+            ("Heart Disease", "health_Heart-disease"),
+            ("Hemophilia", "health_Hemophilia"),
+            ("Hepatitis", "health_Hepatitis"),
+            ("High Blood Pressure", "health_HBP"),
+            ("High Cholesterol", "health_HC"),
+            ("Hypoglycemia", "health_Hypoglycemia"),
+            ("Jaw pain / TMJ", "health_TMJ"),
+            ("Kidney Problems", "health_Kidney-problems"),
+            ("Leukemia", "health_Leukemia"),
+            ("Liver Disease", "health_Liver-disease"),
+            ("Low Blood Pressure", "health_LBP"),
+            ("Lung Disease", "health_Lung-disease"),
+            ("Osteoporosis", "health_Osteoporosis"),
+            ("Radiation Treatments", "health_Radiation-treatment"),
+            ("Renal Dialysis", "health_Renal-dialysis"),
+            ("Rheumatic Fever", "health_Rheumatic-fever"),
+            ("Scarlet Fever", "health_Scarlet-fever"),
+            ("Sickle Cell Disease", "health_Sickle-cell"),
+            ("Sinus Trouble", "health_Sinus-trouble"),
+            ("Stroke", "health_Stroke"),
+            ("Thyroid Disease", "health_Thyroid-disease"),
+            ("Tonsillitis", "health_Tonsillitis"),
+            ("Tuberculosis", "health_Tuberculosis"),
+            ("Ulcers", "health_Ulcers")
           ] %}
-          {% for c in conditions %}
-            <label class="check-item"><input type="checkbox" name="m_conditions" value="{{ c }}"> {{ c }}</label>
+          
+          {% for label, field in conditions %}
+            <label class="check-item">
+              <input type="checkbox" name="m_conditions" value="{{ field }}"> {{ label }}
+            </label>
           {% endfor %}
         </div>
 
