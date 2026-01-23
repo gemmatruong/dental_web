@@ -1,52 +1,52 @@
 # pdf_tools.py
 from pathlib import Path
 from pypdf import PdfReader, PdfWriter
-from pypdf.generic import NameObject, DictionaryObject, BooleanObject
+from pypdf.generic import NameObject, BooleanObject
 
-def fill_pdf_form_strict(input_pdf: Path, output_pdf: Path, field_values: dict[str, str]) -> None:
+def fill_pdf(input_pdf: Path, output_pdf: Path, field_values: dict[str, str]) -> None:
     """
+    Safe filler:
+      - Text fields filled via update_page_form_field_values (correct encoding)
+      - Buttons (checkbox/radio) handled manually using NameObject('/Yes'), NameObject('/1'), etc.
+
     field_values:
-      - Text fields (/Tx): normal strings
-      - Checkbox fields (/Btn): use "Yes" to check (because your PDF has /Yes,/Off)
-      - Radio fields (/Btn): use export values like "1", "2", "3", ... (because your PDF uses /1,/2,...)
+      - text fields: normal strings
+      - checkbox fields: "Yes"  (because your checkboxes have /Yes and /Off)
+      - radio fields: "1","2","3"... (because your radios have /1,/2,/3...)
     """
     reader = PdfReader(str(input_pdf))
     writer = PdfWriter()
 
-    # Copy pages
-    for page in reader.pages:
-        writer.add_page(page)
+    # Preserve the original PDF structure (IMPORTANT)
+    writer.clone_document_from_reader(reader)
 
-    # Copy AcroForm so writer knows it’s a form PDF
-    root = reader.trailer["/Root"]
+    # NeedAppearances uses PDF boolean type
+    root = writer._root_object
     if "/AcroForm" in root:
-        writer._root_object.update({NameObject("/AcroForm"): root["/AcroForm"]})
-    else:
-        writer._root_object.update({NameObject("/AcroForm"): DictionaryObject()})
+        root["/AcroForm"].update({NameObject("/NeedAppearances"): BooleanObject(True)})
 
-    writer._root_object["/AcroForm"].update({NameObject("/NeedAppearances"): BooleanObject(True)})
+    # ---------- 1) Fill TEXT safely ----------
+    # Only pass string values to text filling.
+    # (Buttons will be done manually.)
+    text_values = {k: ("" if v is None else str(v)) for k, v in field_values.items()}
 
-    # --- 1) Fill text fields using pypdf helper ---
-    # We only let pypdf handle text fields; buttons are handled manually below.
     for page in writer.pages:
-        # only keep non-button-ish values here; safest is to just pass everything
-        # (it won’t hurt), but button handling is below anyway
-        writer.update_page_form_field_values(page, field_values)
+        # This handles text fields properly (escaping, encoding, etc.)
+        writer.update_page_form_field_values(page, text_values)
 
-    # --- 2) Manual button handling: set /V on parent AND /AS on widgets ---
-    # Gather widgets by field name
-    widgets_by_name = {}
-
+    # ---------- 2) Fill BUTTONS manually ----------
     for page in writer.pages:
         annots = page.get("/Annots") or []
         for a in annots:
             annot = a.get_object()
 
-            # Find field name: widget /T or parent /T
+            # Determine field name from widget or its parent
             t = annot.get("/T")
             parent_obj = None
             if t is not None:
                 field_name = str(t)
+                if annot.get("/Parent"):
+                    parent_obj = annot["/Parent"].get_object()
             else:
                 parent = annot.get("/Parent")
                 if not parent:
@@ -57,54 +57,38 @@ def fill_pdf_form_strict(input_pdf: Path, output_pdf: Path, field_values: dict[s
                     continue
                 field_name = str(pt)
 
-            # Only care about fields we are filling
             if field_name not in field_values:
                 continue
 
-            # Save widget + parent reference
-            if parent_obj is None:
-                # if widget had /T, its parent might still exist; not required
-                parent = annot.get("/Parent")
-                parent_obj = parent.get_object() if parent else None
+            desired_raw = (field_values.get(field_name) or "").strip()
+            if not desired_raw:
+                continue
 
-            widgets_by_name.setdefault(field_name, []).append((annot, parent_obj))
+            # Buttons must use PDF NameObjects like /Yes or /1
+            desired_name = NameObject(f"/{desired_raw}")
 
-    # Apply states per field
-    for field_name, widgets in widgets_by_name.items():
-        desired = (field_values.get(field_name) or "").strip()
-        if not desired:
-            continue
-
-        # desired PDF name object: /Yes, /1, /2, etc.
-        desired_name = NameObject(f"/{desired}")
-
-        # 2a) Set parent field /V to desired (critical for radios)
-        # Find first non-null parent_obj
-        parent_obj = next((p for (_, p) in widgets if p is not None), None)
-        if parent_obj is not None:
-            parent_obj.update({NameObject("/V"): desired_name})
-
-        # 2b) Set all widget /AS to /Off, then set matching widget /AS to desired
-        for annot, _ in widgets:
             ap = annot.get("/AP")
-            if not ap:
-                continue
-            n = ap.get("/N")
-            if not n:
-                continue
+            if not ap or not ap.get("/N"):
+                continue  # not a button widget
 
-            # possible states keys like /Off, /Yes, /1, /2...
-            possible_states = set(n.keys())
+            n = ap["/N"]
+            possible = {str(k).lstrip("/"): k for k in n.keys()}  # "Off","Yes","1","2",...
 
-            # set Off if available
-            if NameObject("/Off") in possible_states:
-                annot.update({NameObject("/AS"): NameObject("/Off")})
+            # Reset to Off first (if exists)
+            if "Off" in possible:
+                annot.update({NameObject("/AS"): possible["Off"]})
 
-            # if this widget supports the desired state, set it
-            if desired_name in possible_states:
-                annot.update({NameObject("/AS"): desired_name})
+            # Set appearance to desired if this widget supports it
+            if desired_raw in possible:
+                annot.update({NameObject("/AS"): possible[desired_raw]})
 
-    # Write out
+            # Set values:
+            # - radios usually need parent /V
+            # - checkboxes often need widget /V too
+            annot.update({NameObject("/V"): desired_name})
+            if parent_obj is not None:
+                parent_obj.update({NameObject("/V"): desired_name})
+
     output_pdf.parent.mkdir(parents=True, exist_ok=True)
     with open(output_pdf, "wb") as f:
         writer.write(f)
