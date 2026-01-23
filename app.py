@@ -7,8 +7,7 @@ from db import init_db, get_conn
 from pathlib import Path
 from werkzeug.utils import secure_filename
 from datetime import datetime
-from utils.pdf_gen import generate_np_pdf
-from pdf_tools import fill_pdf_form
+from pdf_tools import fill_pdf
 
 
 # read .env file (environment file) and get values from it
@@ -72,10 +71,14 @@ def implants():
     return render_template("implants.html", clinic=CLINIC)
 
 
+SEX_MAP = {"Male": "1", "Female": "2"}
+YESNO_MAP = {"Yes": "1", "No": "2"}
+MARITAL_MAP = {"Single":"1","Married":"2","Divorced":"3","Separated":"4","Widowed":"5"}
+SUB_REL_MAP = {"Self":"1","Spouse":"2","Child":"3","Other":"4"}
 
 CONDITION_MAP = {
-    "AIDS/HIV +": "heath_AIDS",
-    "Alzheimer's Disease": "heath_Alzheimer",
+    "AIDS/HIV +": "health_AIDS",
+    "Alzheimer's Disease": "health_Alzheimer",
     "Anemia": "health_Anemia",
     "Arthritis/Gout": "health_Arthritis",
     "Artificial Heart Valve": "health_AHV",
@@ -85,40 +88,41 @@ CONDITION_MAP = {
     "Blood Transfusion": "health_Blood-transfusion",
     "Cancer": "health_Cancer",
     "Chest Pains": "health_Chest-pains",
-    "Circulatory Problems": "heath_Circulatory-problem",
-    "Cortisone Medicine": "heath_Cortisone",
-    "Diabetes": "heath_Diabetes",
-    "Epilepsy or Seizures": "heath_Epilepsy",
-    "Fainting": "heath_Fainting",
-    "Glaucoma": "heath_Glaucoma",
-    "Heart Attack/Failure": "heath_Heart-attack",
-    "Heart Murmur": "heath_Heart-murmur",
-    "Heart Pacemaker": "heath_Heart-pacemaker",
-    "Heart Disease": "heath_Heart-disease",
-    "Hemophilia": "heath_Hemophilia",
-    "Hepatitis": "heath_Hepatitis",
-    "High Blood Pressure": "heath_HBP",
-    "High Cholesterol": "heath_HC",
-    "Hypoglycemia": "heath_Hypoglycemia",
-    "Jaw pain / TMJ": "heath_TMJ",
-    "Kidney Problems": "heath_Kidney-problems",
-    "Leukemia": "heath_Leukemia",
-    "Liver Disease": "heath_Liver-disease",
-    "Low Blood Pressure": "heath_LBP",
-    "Lung Disease": "heath_Lung-disease",
-    "Osteoporosis": "heath_Osteoporosis",
-    "Radiation Treatments": "heath_Radiation-treatment",
-    "Renal Dialysis": "heath_Renal-dialysis",
-    "Rheumatic Fever": "heath_Rheumatic-fever",
-    "Scarlet Fever": "heath_Scarlet-fever",
-    "Sickle Cell Disease": "heath_Sickle-cell",
-    "Sinus Trouble": "heath_Sinus-trouble",
-    "Stroke": "heath_Stroke",
-    "Thyroid Disease": "heath_Thyroid-disease",
-    "Tonsillitis": "heath_Tonsillitis",
-    "Tuberculosis": "heath_Tuberculosis",
-    "Ulcers": "heath_Ulcers",
+    "Circulatory Problems": "health_Circulatory-problem",
+    "Cortisone Medicine": "health_Cortisone",
+    "Diabetes": "health_Diabetes",
+    "Epilepsy or Seizures": "health_Epilepsy",
+    "Fainting": "health_Fainting",
+    "Glaucoma": "health_Glaucoma",
+    "Heart Attack/Failure": "health_Heart-attack",
+    "Heart Murmur": "health_Heart-murmur",
+    "Heart Pacemaker": "health_Heart-pacemaker",
+    "Heart Disease": "health_Heart-disease",
+    "Hemophilia": "health_Hemophilia",
+    "Hepatitis": "health_Hepatitis",
+    "High Blood Pressure": "health_HBP",
+    "High Cholesterol": "health_HC",
+    "Hypoglycemia": "health_Hypoglycemia",
+    "Jaw pain / TMJ": "health_TMJ",
+    "Kidney Problems": "health_Kidney-problems",
+    "Leukemia": "health_Leukemia",
+    "Liver Disease": "health_Liver-disease",
+    "Low Blood Pressure": "health_LBP",
+    "Lung Disease": "health_Lung-disease",
+    "Osteoporosis": "health_Osteoporosis",
+    "Radiation Treatments": "health_Radiation-treatment",
+    "Renal Dialysis": "health_Renal-dialysis",
+    "Rheumatic Fever": "health_Rheumatic-fever",
+    "Scarlet Fever": "health_Scarlet-fever",
+    "Sickle Cell Disease": "health_Sickle-cell",
+    "Sinus Trouble": "health_Sinus-trouble",
+    "Stroke": "health_Stroke",
+    "Thyroid Disease": "health_Thyroid-disease",
+    "Tonsillitis": "health_Tonsillitis",
+    "Tuberculosis": "health_Tuberculosis",
+    "Ulcers": "health_Ulcers"
 }
+
 
 @app.get("/new-patients")
 def new_patients():
@@ -128,68 +132,79 @@ def new_patients():
 def new_patients_submit():
     form = request.form
     try:
+        # basic required checks
+        p_first = form.get("p_first", "").strip()
+        p_last = form.get("p_last", "").strip()
+        sig_med = form.get("sig_med", "").strip()
+        if not p_first or not p_last:
+            return render_template("new_patients.html", clinic=CLINIC, success=False,
+                                   error="Patient first and last name are required.")
+        if not sig_med:
+            return render_template("new_patients.html", clinic=CLINIC, success=False,
+                                   error="Medical signature is required.")
+        if not form.get("agree"):
+            return render_template("new_patients.html", clinic=CLINIC, success=False,
+                                   error="You must agree to the policy to submit.")
+
+        # build common text fields
         pdf_fields = {
-            # Patient info
-            "pt-firstname": form.get("p_first", ""),
-            "pt-lastname": form.get("p_last", ""),
-            "pt-midname": form.get("p_mi", ""),
-            "pt-address": form.get("p_address", ""),
-            "pt-city": form.get("p_city", ""),
-            "pt-state": form.get("p_state", ""),
-            "pt-zipcode": form.get("p_zip", ""),
-            "pt-cellphone": form.get("p_cell_phone", ""),
-            "pt-alt-phone": form.get("p_alt_phone", ""),
-            "pt-dob": form.get("p_dob", ""),
-            "pt-email": form.get("p_email", ""),
-
-            # Radios
-            "sex": form.get("p_sex", ""),
-            "marital-status": form.get("p_marital", ""),
-
-            # Medical
-            "serious-illness": form.get("m_serious", ""),
-            "phen-fen": form.get("m_phenfen", ""),
-            "pregnant": form.get("w_pregnant", ""),
-            "contraceptives": form.get("w_ocp", ""),
-            "nursing": form.get("w_nursing", ""),
-
-            # Textareas
-            "pt-medications": form.get("m_meds", ""),
-            "pt-allergies": form.get("m_allergies", ""),
-
-            # Signatures
-            "pt-med-sig": form.get("sig_med", ""),
-            "pt-med-date": form.get("sig_med_date", ""),
-
-            # Insurance
-            "sub-name": form.get("pi_subscriber", ""),
-            "sub-ID": form.get("pi_member_id", ""),
-            "sub-group": form.get("pi_group", ""),
-            "sub-dob": form.get("pi_dob", ""),
-            "sub-ins-name": form.get("pi_company", ""),
-            "sub-sig-name": form.get("sig_ins_name", ""),
-            "sub-signature": form.get("sig_ins", ""),
-            "sub-sig-rel": form.get("pi_rel", ""),
-            "sub-relationship": form.get("pi_rel", ""),
-            "sub-sig-date": form.get("sig_ins_date", ""),
+            "pt-firstname": form.get("p_first", "").strip(),
+            "pt-lastname": form.get("p_last", "").strip(),
+            "pt-midname": form.get("p_mi", "").strip(),
+            "pt-address": form.get("p_address", "").strip(),
+            "pt-city": form.get("p_city", "").strip(),
+            "pt-state": form.get("p_state", "").strip(),
+            "pt-zipcode": form.get("p_zip", "").strip(),
+            "pt-cellphone": form.get("p_cell_phone", "").strip(),
+            "pt-alt-phone": form.get("p_alt_phone", "").strip(),
+            "pt-dob": form.get("p_dob", "").strip(),
+            "pt-email": form.get("p_email", "").strip(),
+            # textareas
+            "pt-medications": form.get("m_meds", "").strip(),
+            "pt-allergies": form.get("m_allergies", "").strip(),
+            # signature text fields (replace keys if your PDF uses different names)
+            "pt-med-sig": sig_med,
+            "pt-med-date": form.get("sig_med_date", "").strip() or datetime.now().strftime("%m/%d/%y"),
+            # Insurance text fields (adjust RHS to exact PDF text field names if they differ)
+            "sub-name": form.get("pi_subscriber", "").strip(),
+            "sub-ID": form.get("pi_member_id", "").strip(),
+            "sub-group": form.get("pi_group", "").strip(),
+            "sub-dob": form.get("pi_dob", "").strip(),
+            "sub-ins-name": form.get("pi_company", "").strip(),
+            "sub-sig-name": form.get("sig_ins_name", "").strip(),
+            "sub-signature": form.get("sig_ins", "").strip(),
+            "sub-sig-date": form.get("sig_ins_date", "").strip() or datetime.now().strftime("%m/%d/%y"),
         }
 
-        # Handle condition checkboxes
+        # radios -> numbers
+        if form.get("p_sex") in SEX_MAP:
+            pdf_fields["sex"] = SEX_MAP[form.get("p_sex")]
+
+        if form.get("m_serious") in YESNO_MAP:
+            pdf_fields["serious-illness"] = YESNO_MAP[form.get("m_serious")]
+
+        if form.get("m_phenfen") in YESNO_MAP:
+            pdf_fields["phen-fen"] = YESNO_MAP[form.get("m_phenfen")]
+
+        # checkboxes -> Yes
         for condition in form.getlist("m_conditions"):
             pdf_field = CONDITION_MAP.get(condition)
             if pdf_field:
-                pdf_fields[pdf_field] = "Yes"  # or "On" if your PDF uses On
+                pdf_fields[pdf_field] = "Yes"
 
-        # File name
+        pdf_fields = {k: v for k,v in pdf_fields.items() if str(v).strip()}
+
+        # File name + output path
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         safe_name = f"{form.get('p_last','Patient')}_{form.get('p_first','')}"
+        safe_name = secure_filename(safe_name) or "patient"
         output_pdf = FILLED_DIR / f"{safe_name}_{timestamp}.pdf"
+        
+        # fill PDF
+        fill_pdf(PDF_TEMPLATE, output_pdf, pdf_fields)
 
-        fill_pdf_form(
-            input_pdf=PDF_TEMPLATE,
-            output_pdf=output_pdf,
-            field_values=pdf_fields
-        )
+        # TODO: upload to Drive + send notification email (if you want)
+
 
         return render_template("new_patients.html", clinic=CLINIC, success=True)
 
