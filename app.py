@@ -76,53 +76,6 @@ YESNO_MAP = {"Yes": "1", "No": "2"}
 MARITAL_MAP = {"Single":"1","Married":"2","Divorced":"3","Separated":"4","Widowed":"5"}
 SUB_REL_MAP = {"Self":"1","Spouse":"2","Child":"3","Other":"4"}
 
-CONDITION_MAP = {
-    "AIDS/HIV +": "health_AIDS",
-    "Alzheimer's Disease": "health_Alzheimer",
-    "Anemia": "health_Anemia",
-    "Arthritis/Gout": "health_Arthritis",
-    "Artificial Heart Valve": "health_AHV",
-    "Artificial Joint": "health_Artificial-joint",
-    "Asthma": "health_Asthma",
-    "Blood Disease": "health_Blood-disease",
-    "Blood Transfusion": "health_Blood-transfusion",
-    "Cancer": "health_Cancer",
-    "Chest Pains": "health_Chest-pains",
-    "Circulatory Problems": "health_Circulatory-problem",
-    "Cortisone Medicine": "health_Cortisone",
-    "Diabetes": "health_Diabetes",
-    "Epilepsy or Seizures": "health_Epilepsy",
-    "Fainting": "health_Fainting",
-    "Glaucoma": "health_Glaucoma",
-    "Heart Attack/Failure": "health_Heart-attack",
-    "Heart Murmur": "health_Heart-murmur",
-    "Heart Pacemaker": "health_Heart-pacemaker",
-    "Heart Disease": "health_Heart-disease",
-    "Hemophilia": "health_Hemophilia",
-    "Hepatitis": "health_Hepatitis",
-    "High Blood Pressure": "health_HBP",
-    "High Cholesterol": "health_HC",
-    "Hypoglycemia": "health_Hypoglycemia",
-    "Jaw pain / TMJ": "health_TMJ",
-    "Kidney Problems": "health_Kidney-problems",
-    "Leukemia": "health_Leukemia",
-    "Liver Disease": "health_Liver-disease",
-    "Low Blood Pressure": "health_LBP",
-    "Lung Disease": "health_Lung-disease",
-    "Osteoporosis": "health_Osteoporosis",
-    "Radiation Treatments": "health_Radiation-treatment",
-    "Renal Dialysis": "health_Renal-dialysis",
-    "Rheumatic Fever": "health_Rheumatic-fever",
-    "Scarlet Fever": "health_Scarlet-fever",
-    "Sickle Cell Disease": "health_Sickle-cell",
-    "Sinus Trouble": "health_Sinus-trouble",
-    "Stroke": "health_Stroke",
-    "Thyroid Disease": "health_Thyroid-disease",
-    "Tonsillitis": "health_Tonsillitis",
-    "Tuberculosis": "health_Tuberculosis",
-    "Ulcers": "health_Ulcers"
-}
-
 
 @app.get("/new-patients")
 def new_patients():
@@ -179,18 +132,31 @@ def new_patients_submit():
         # radios -> numbers
         if form.get("p_sex") in SEX_MAP:
             pdf_fields["sex"] = SEX_MAP[form.get("p_sex")]
+        
+        if form.get("p_marital") in MARITAL_MAP:
+            pdf_fields["marital-status"] = MARITAL_MAP[form.get("p_marital")]
+        
+        if form.get("pi_rel") in SUB_REL_MAP:
+            pdf_fields["sub-relationship"] = SUB_REL_MAP[form.get("pi_rel")]
 
         if form.get("m_serious") in YESNO_MAP:
             pdf_fields["serious-illness"] = YESNO_MAP[form.get("m_serious")]
 
         if form.get("m_phenfen") in YESNO_MAP:
             pdf_fields["phen-fen"] = YESNO_MAP[form.get("m_phenfen")]
+        
+        if form.get("w_pregnant") in YESNO_MAP:
+            pdf_fields["pregnant"] = YESNO_MAP[form.get("w_pregnant")]
+        
+        if form.get("w_ocp") in YESNO_MAP:
+            pdf_fields["contraceptives"] = YESNO_MAP[form.get("w_ocp")]
+
+        if form.get("w_nursing") in YESNO_MAP:
+            pdf_fields["nursing"] = YESNO_MAP[form.get("w_nursing")]
 
         # checkboxes -> Yes
         for condition in form.getlist("m_conditions"):
-            pdf_field = CONDITION_MAP.get(condition)
-            if pdf_field:
-                pdf_fields[pdf_field] = "Yes"
+            pdf_fields[condition] = "Yes"
 
         pdf_fields = {k: v for k,v in pdf_fields.items() if str(v).strip()}
 
