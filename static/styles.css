@@ -650,7 +650,7 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-left 0.3s ease;
 }
 
-form:hover {
+.form:hover {
     border-left: 6px solid #83c9f4;
     transform: translateY(-2px);
     box-shadow: 0 40px 80px rgba(10, 45, 104, 0.15);
@@ -672,7 +672,6 @@ form:hover {
     background: #fbf6d8;
 }
 
-/* Hover effect for interest */
 .form-section:hover {
     transform: translateY(-4px);
     box-shadow: 0 30px 60px rgba(10, 45, 104, 0.12);
@@ -680,11 +679,11 @@ form:hover {
 
 /* Section headers */
 .form-section h2 {
-    color: #114570;      /* Deep navy header */
+    color: #114570;
     font-weight: 700;
     font-size: 28px;
     margin-bottom: 16px;
-    border-bottom: 2px solid #4682B4; /* subtle underline */
+    border-bottom: 2px solid #4682B4;
     padding-bottom: 20px;
     text-align: center;
 }
@@ -698,27 +697,32 @@ form:hover {
     margin-bottom: 12px;
 }
 
-/* Grids */
+/* Grid layout */
 
-.one-col {
-    display: grid;
+.two-col,
+.three-col {
     margin-right: 20px;
 }
+
 
 .two-col {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 50px;
-    margin-right: 20px;
 }
 
 .three-col {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 40px;
+}
+
+/* Single-column direct children of form-section */
+.form-section > label:not(.check-item):not(.inline-radio label) {
     margin-right: 20px;
 }
 
+/* Form inputs */
 
 .form label {
     display: block;
@@ -744,7 +748,7 @@ form:hover {
 
 .form textarea {
     resize: vertical;
-    margin-right: 20px;
+    min-height: 100px;
 }
 
 .form input::placeholder,
@@ -758,7 +762,10 @@ form:hover {
     outline: none;
     border-color: #4682B4;
     box-shadow: 0 0 0 4px rgba(70,130,180,0.15);
+    transform: translateY(-1px);
 }
+
+/* Radio buttons */
 
 .inline-radio {
     display: flex;
@@ -777,38 +784,85 @@ form:hover {
     cursor: pointer;
     font-size: 14px;
     font-weight: 500;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, transform 0.2s ease;
+    border: 2px solid transparent;
 }
 
 .inline-radio label:hover {
     background: #e8f1fb;
+    transform: translateY(-1px);
+    border-color: #c8dff5;
 }
 
-/* =========================
-   CHECKBOX GRID
-========================= */
+.inline-radio input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Checkbox buttons */
 
 .check-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 12px;
     margin-top: 12px;
+    margin-right: 10px;
 }
 
 .check-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 14px;
+    padding: 10px 10px;
     border-radius: 16px;
-    border: 1px solid #e3eaf4;
+    border: 2px solid #e3eaf4;
     background: #fafcff;
-    font-size: 14px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* =========================
-   ALERTS
-========================= */
+.check-item:hover {
+    background: #f0f7ff;
+    border-color: #4682B4;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(70,130,180,0.1);
+}
+
+.check-item input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.check-item input[type="checkbox"]:checked + span,
+.check-item:has(input[type="checkbox"]:checked) {
+    color: #114570;
+    font-weight: 600;
+}
+
+/* Signature fields */
+
+.form-section h3 + label,
+.form-section label:has(input[name^="sig_"]) {
+    background: rgba(70,130,180,0.05);
+    padding: 16px;
+    border-radius: 12px;
+    border-left: 4px solid #4682B4;
+    margin-top: 16px;
+}
+
+
+.two-col textarea {
+    min-height: 120px;
+}
+
+.form textarea:focus {
+    min-height: 140px;
+}
+
+/* Alerts */
 
 .alert {
     background: #ffe5e5;
@@ -816,30 +870,64 @@ form:hover {
     padding: 14px 18px;
     border-radius: 14px;
     margin-bottom: 24px;
+    border-left: 4px solid #d32f2f;
+    font-weight: 500;
 }
 
 .success {
-    background: #e8f7ee;
+    background: linear-gradient(135deg, #e8f7ee, #d4f1e0);
     color: #1f7a3a;
-    padding: 18px;
+    padding: 24px;
     border-radius: 14px;
     text-align: center;
     font-size: 18px;
+    font-weight: 600;
+    border-left: 4px solid #4caf50;
+    box-shadow: 0 8px 20px rgba(31,122,58,0.15);
 }
 
-/* =========================
-   FINANCIAL AGREEMENT
-========================= */
+/* Insurance Info Section */
 
-.muted {
-    font-size: 14px;
-    color: #6b86a6;
-    margin-bottom: 16px;
+#pi_block,
+#pi_subscriber_block {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    border: 2px dashed #4682B4;
 }
 
-/* =========================
-   SUBMIT BUTTON
-========================= */
+/* Agreement checkbox */
+
+.form-section label:has(input[type="checkbox"][name="agree"]) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff9e6, #fffbf0);
+    border: 2px solid #ffd54f;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d4977;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-section label:has(input[type="checkbox"][name="agree"]):hover {
+    background: linear-gradient(135deg, #fff5d6, #fff9e6);
+    border-color: #ffc107;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255,193,7,0.2);
+}
+
+.form-section label:has(input[type="checkbox"][name="agree"]) input {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* Submit button */
 
 button.btn {
     display: block;
@@ -855,30 +943,36 @@ button.btn {
     color: #fff;
     cursor: pointer;
     box-shadow: 0 20px 40px rgba(70,130,180,0.35);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
 }
 
 button.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 25px 50px rgba(70,130,180,0.45);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(70,130,180,0.5);
+    background: linear-gradient(135deg, #3a6fa0, #6bb8e8);
 }
 
-/* =========================
-   NOTES SECTION
-========================= */
+button.btn:active {
+    transform: translateY(-1px) scale(1);
+}
+
+/* Note Section */
 
 .np-notes {
     max-width: 1000px;
     margin: 80px auto;
     padding: 40px;
-    background: #f6f9fd;
+    background: linear-gradient(135deg, #f6f9fd, #e8f1fb);
     border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(10, 45, 104, 0.1);
+    border-left: 6px solid #4682B4;
 }
 
 .np-notes h2 {
     font-size: 28px;
     color: #2d4977;
     margin-bottom: 20px;
+    font-weight: 700;
 }
 
 .np-notes ul {
@@ -888,16 +982,50 @@ button.btn:hover {
 
 .np-notes li {
     font-size: 16px;
-    padding-left: 26px;
-    margin-bottom: 14px;
+    padding: 12px 12px 12px 36px;
+    margin-bottom: 10px;
     position: relative;
     color: #3d5f8a;
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.np-notes li:hover {
+    background: rgba(255,255,255,0.9);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(70,130,180,0.1);
 }
 
 .np-notes li::before {
     content: "✓";
     position: absolute;
-    left: 0;
+    left: 12px;
     color: #4682B4;
     font-weight: 700;
+    font-size: 18px;
+}
+
+/* =========================
+   RESPONSIVE ADJUSTMENTS
+========================= */
+
+@media (max-width: 768px) {
+    .form {
+        padding: 24px;
+    }
+    
+    .form-section {
+        padding: 20px;
+    }
+    
+    .two-col,
+    .three-col {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .check-grid {
+        grid-template-columns: 1fr;
+    }
 }
