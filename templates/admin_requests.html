@@ -3,6 +3,7 @@
 <div class="row">
     <h1>Appointment Request</h1>
     <form method="post" action="{{ url_for('admin_logout') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
         <button class="btn secondary" type="submit">Logout</button>
     </form>
 </div>
@@ -25,10 +26,11 @@
             <td>{{ r["note"] or "" }}</td>
             <td>
                 <form method="post" action="/admin/requests/{{ r['id'] }}/status" class="inline">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <select name="status">
                         <option {% if r["status"]=="new" %}selected{% endif %}>new</option>
-                        <option {% if r["status"]=="contacted" %}slected{% endif %}>contacted</option>
-                        <option {% if r["status"]=="closed" %}selected{endif %}>closed</option>
+                        <option {% if r["status"]=="contacted" %}selected{% endif %}>contacted</option>
+                        <option {% if r["status"]=="closed" %}selected{% endif %}>closed</option>
                     </select>
                     <button class="btn tiny" type="submit">Update</button>
                 </form>

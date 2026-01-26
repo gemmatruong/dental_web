@@ -1,9 +1,13 @@
-{% extends base.html}
+{% extends "base.html" %}
 {% block content %}
 
 <h1>Admin Login</h1>
-{% if error %}<div class="alert">{{ error }}</div>{$ endif %}
+{% if error %}
+    <div class="alert">{{ error }}</div>
+{% endif %}
 <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    
     <label>Password <input type="password" name="password" required></label>
     <button class="btn" type="submit">Login</button>
 </form>
