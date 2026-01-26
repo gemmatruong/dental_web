@@ -10,6 +10,7 @@
     <div class="success">Thanks! We received your request and will contact you soon.</div>
 {% else %}
 <form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
     <label>Name* <input name="name" required></label>
     <label>Phone or Email* <input name="contact" required></label>
     <label>Preferred days/times* <input name="preferred_times" required placeholder="e.g., Tue afternoon or Fri morning"></label>
