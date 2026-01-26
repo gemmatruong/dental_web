@@ -1,14 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Admin Login</h1>
-{% if error %}
-    <div class="alert">{{ error }}</div>
-{% endif %}
-<form method="post" class="form">
-    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-    
-    <label>Password <input type="password" name="password" required></label>
-    <button class="btn" type="submit">Login</button>
-</form>
+<div class="admin-login-container">
+    <div class="admin-login-card">
+        <div class="admin-header">
+            <div class="admin-icon">🔐</div>
+            <h1>Admin Portal</h1>
+        </div>
+
+        {% if error %}
+            <div class="alert">{{ error }}</div>
+        {% endif %}
+
+        <form method="post" class="admin-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            
+            <label>
+                <span>Password</span>
+                <input type="password" name="password" required autofocus placeholder="Enter password">
+            </label>
+            
+            <button class="btn admin-btn" type="submit">
+                <span>Login</span>
+                <span class="arrow">→</span>
+            </button>
+        </form>
+    </div>
+</div>
+
 {% endblock %}
