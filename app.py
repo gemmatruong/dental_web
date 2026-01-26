@@ -6,14 +6,20 @@ from dotenv import load_dotenv
 from db import init_db, get_conn
 from pathlib import Path
 from werkzeug.utils import secure_filename
-from datetime import datetime
+from werkzeug.security import check_password_hash
+import time
 from pdf_tools import fill_pdf
+from datetime import datetime, timedelta
+from flask_wtf.csrf import CSRFProtect
+import logging
+
 
 
 # read .env file (environment file) and get values from it
 load_dotenv()
 
 app = Flask(__name__)
+
 
 # for later use in image uploads
 UPLOAD_DIR = Path("static/uploads/reviews")
@@ -29,6 +35,17 @@ app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024  # 8MB limit
 # Get value of variable named FLASK_SECRET_KEY from .env file
 # otherwise the default string
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
+
+# Turn on CSFR globally protection
+csrf = CSRFProtect(app)
+
+
+# ADD THESE:
+app.config.update(
+    SESSION_COOKIE_SECURE=True,       # Only send over HTTPS
+    SESSION_COOKIE_HTTPONLY=True,     # Prevent JavaScript access
+    SESSION_COOKIE_SAMESITE='Lax',    # CSRF protection
+)
 
 with open("clinic_info.json", "r", encoding="utf-8") as f:
     CLINIC = json.load(f)   # convert json data into a dict in python
@@ -217,21 +234,65 @@ def reviews_page():
 #-------ADMIN AUTH-----------
 #----------------------------
 
+
 def require_admin():
     if not session.get("is_admin"):
         abort(403)
+    
+    # Check session timeout (60 minutes)
+    last_activity = session.get("last_activity")
+    if last_activity:
+        last_time = datetime.fromisoformat(last_activity)
+        if datetime.now() - last_time > timedelta(minutes=60):
+            session.clear()
+            abort(403)
+    
+    # Update last activity
+    session["last_activity"] = datetime.now().isoformat()
+
+# Track failed login attempts (simple in-memory, resets on restart)
+failed_attempts = {}
 
 @app.get("/admin")
 def admin_login_get():
     return render_template("admin_login.html", clinic=CLINIC)
 
+# Track failed login attempts (simple in-memory, resets on restart)
+failed_attempts = {}
+
 @app.post("/admin")
 def admin_login_post():
     password = request.form.get("password", "")
-    if password and password == os.environ.get("ADMIN_PASSWORD", "changeme"):
+    ip = request.remote_addr
+    
+    # Rate limiting: check failed attempts
+    if ip in failed_attempts:
+        attempts, last_time = failed_attempts[ip]
+        if attempts >= 5 and time.time() - last_time < 300:  # 5 min lockout
+            return render_template("admin_login.html", clinic=CLINIC, 
+                                   error="Too many failed attempts. Try again in 5 minutes.")
+    
+    # Get HASHED password from environment
+    hashed_pw = os.environ.get("ADMIN_PASSWORD_HASH")
+    
+    if not hashed_pw:
+        app.logger.error("ADMIN_PASSWORD_HASH not set!")
+        abort(500)
+    
+    if password and check_password_hash(hashed_pw, password):
         session["is_admin"] = True
+        # Clear failed attempts on success
+        failed_attempts.pop(ip, None)
         return redirect(url_for("admin_requests"))
-    return render_template("admin_login.html", clinic=CLINIC, error="Incorrect password.")
+    
+    # Track failed attempt
+    if ip in failed_attempts:
+        failed_attempts[ip] = (failed_attempts[ip][0] + 1, time.time())
+    else:
+        failed_attempts[ip] = (1, time.time())
+    
+    return render_template("admin_login.html", clinic=CLINIC, 
+                           error="Incorrect password.")
 
 @app.get("/admin/requests")
 def admin_requests():
@@ -266,11 +327,22 @@ def admin_reviews_upload():
     require_admin()
 
     if "image" not in request.files:
-        return redirect(url_for("admin_reviews_get"))
+        return render_template(
+            "admin_reviews.html",
+            clinic=CLINIC,
+            images=list_review_images(),
+            error="No file uploaded."
+        )
     
-    file = request.files["images"]
+    file = request.files["image"]
+    
     if not file or file.filename == "":
-        return redirect(url_for("admin_reviews_get"))
+        return render_template(
+            "admin_reviews.html",
+            clinic=CLINIC,
+            images=list_review_images(),
+            error="No file selected."
+        )
     
     if not allowed_file(file.filename):
         return render_template(
@@ -279,21 +351,55 @@ def admin_reviews_upload():
             images=list_review_images(),
             error="Only PNG, JPG, JPEG, or WEBP files are allowed."
         )
+    
+    # Add file size validation
+    file.seek(0, 2)  # Seek to end
+    size = file.tell()
+    file.seek(0)  # Reset
+    
+    if size > app.config["MAX_CONTENT_LENGTH"]:
+        return render_template(
+            "admin_reviews.html",
+            clinic=CLINIC,
+            images=list_review_images(),
+            error="File too large. Maximum 8MB."
+        )
+    
     UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
-
-    safe = secure_filename(file.filename)   #remove weird characters
-
-    # Avoid overwriting existing files:
-    dest = UPLOAD_DIR / safe
+    
+    safe = secure_filename(file.filename)
+    if not safe:
+        return render_template(
+            "admin_reviews.html",
+            clinic=CLINIC,
+            images=list_review_images(),
+            error="Invalid filename."
+        )
+    
+    # Prevent directory traversal
+    dest = (UPLOAD_DIR / safe).resolve()
+    if not str(dest).startswith(str(UPLOAD_DIR.resolve())):
+        abort(403)
+    
+    # Handle duplicates
     if dest.exists():
         stem = dest.stem
         ext = dest.suffix
         i = 2
         while (UPLOAD_DIR / f"{stem}-{i}{ext}").exists():
             i += 1
-            dest = UPLOAD_DIR / f"{stem}-{i}{ext}"
+        dest = UPLOAD_DIR / f"{stem}-{i}{ext}"
+    
     file.save(dest)
     return redirect(url_for("admin_reviews_get"))
+
+
+# Configure logging
+logging.basicConfig(
+    filename='admin_audit.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 @app.post("/admin/reviews/delete/<filename>")
 def admin_reviews_delete(filename: str):
@@ -304,6 +410,7 @@ def admin_reviews_delete(filename: str):
     # Safety check: ensure delete stays inside the upload folder
     if target.exists() and target.is_file():
         target.unlink()
+        logging.info(f"Admin deleted review image: {safe} from IP {request.remote_addr}")
     
     return redirect(url_for("admin_reviews_get"))
 
