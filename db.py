@@ -22,7 +22,7 @@ def init_db() -> None:
                 service TEXT NOT NULL,
                 note TEXT,
                 status TEXT NOT NULL DEFAULT 'new',
-                created_at TEXT NOT NULL DEFAULT (datetime('now'))
+                created_at TEXT NOT NULL DEFAULT (datetime('now', 'localtime'))
     )
     """)
     conn.commit()
