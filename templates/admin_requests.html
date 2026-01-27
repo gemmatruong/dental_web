@@ -1,42 +1,120 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="row">
-    <h1>Appointment Request</h1>
-    <form method="post" action="{{ url_for('admin_logout') }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button class="btn secondary" type="submit">Logout</button>
-    </form>
+
+<div class="admin-container">
+    <!-- Header Section -->
+    <div class="admin-page-header">
+        <div>
+            <h1>Appointment Requests</h1>
+        </div>
+        <div class="admin-header-actions">
+            <a href="{{ url_for('admin_reviews_get') }}" class="btn secondary">Manage Reviews</a>
+            <form method="post" action="{{ url_for('admin_logout') }}" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button class="btn btn-logout" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card stat-new">
+            <div class="stat-content">
+                <div class="stat-label">New</div>
+                <div class="stat-value">{{ rows | selectattr('status', 'equalto', 'new') | list | length }}</div>
+            </div>
+        </div>
+        <div class="stat-card stat-contacted">
+            <div class="stat-content">
+                <div class="stat-label">Contacted</div>
+                <div class="stat-value">{{ rows | selectattr('status', 'equalto', 'contacted') | list | length }}</div>
+            </div>
+        </div>
+        <div class="stat-card stat-closed">
+            <div class="stat-content">
+                <div class="stat-label">Closed</div>
+                <div class="stat-value">{{ rows | selectattr('status', 'equalto', 'closed') | list | length }}</div>
+            </div>
+        </div>
+        <div class="stat-card stat-total">
+            <div class="stat-content">
+                <div class="stat-label">Total</div>
+                <div class="stat-value">{{ rows | length }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Requests Table -->
+    {% if rows %}
+    <div class="requests-table-container">
+        <table class="requests-table">
+            <thead>
+                <tr>
+                    <th>Created</th>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Preferred Times</th>
+                    <th>Service</th>
+                    <th>Note</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+            {% for r in rows %}
+                <tr class="request-row status-{{ r['status'] }}">
+                    <td class="cell-date">
+                        <div class="date-display">{{ r["created_at"][:10] }}</div>
+                        <div class="time-display">{{ r["created_at"][11:16] }}</div>
+                    </td>
+                    <td class="cell-name">
+                        <strong>{{ r["name"] }}</strong>
+                    </td>
+                    <td class="cell-contact">{{ r["contact"] }}</td>
+                    <td class="cell-times">{{ r["preferred_times"] }}</td>
+                    <td class="cell-service">
+                        <span class="service-badge">{{ r["service"] }}</span>
+                    </td>
+                    <td class="cell-note">
+                        {% if r["note"] %}
+                            <div class="note-preview" title="{{ r['note'] }}">
+                                {{ r["note"][:50] }}{% if r["note"]|length > 50 %}...{% endif %}
+                            </div>
+                        {% else %}
+                            <span class="text-muted">—</span>
+                        {% endif %}
+                    </td>
+                    <td class="cell-status">
+                        <span class="status-badge status-{{ r['status'] }}">
+                            {% if r["status"] == "new" %}🆕 New
+                            {% elif r["status"] == "contacted" %}📞Contacted
+                            {% elif r["status"] == "closed" %}✅ Closed
+                            {% endif %}
+                        </span>
+                    </td>
+                    <td class="cell-action">
+                        <form method="post" action="/admin/requests/{{ r['id'] }}/status" class="status-form">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <select name="status" class="status-select" onchange="this.form.submit()">
+                                <option value="new" {% if r["status"]=="new" %}selected{% endif %}>New</option>
+                                <option value="contacted" {% if r["status"]=="contacted" %}selected{% endif %}>Contacted</option>
+                                <option value="closed" {% if r["status"]=="closed" %}selected{% endif %}>Closed</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📭</div>
+        <h2>No appointment requests yet</h2>
+        <p>When patients submit appointment requests, they'll appear here.</p>
+    </div>
+    {% endif %}
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Created</th><th>Name</th><th>Contact</th><th>Preferred</th><th>Service</th><th>Note</th><th>Status</th>
-        </tr>
-    </thead>
-    
-    <tbody>
-    {% for r in rows %}
-        <tr>
-            <td>{{ r["created_at"] }}</td>
-            <td>{{ r["name"] }}</td>
-            <td>{{ r["contact"] }}</td>
-            <td>{{ r["preferred_times"] }}</td>
-            <td>{{ r["service"] }}</td>
-            <td>{{ r["note"] or "" }}</td>
-            <td>
-                <form method="post" action="/admin/requests/{{ r['id'] }}/status" class="inline">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <select name="status">
-                        <option {% if r["status"]=="new" %}selected{% endif %}>new</option>
-                        <option {% if r["status"]=="contacted" %}selected{% endif %}>contacted</option>
-                        <option {% if r["status"]=="closed" %}selected{% endif %}>closed</option>
-                    </select>
-                    <button class="btn tiny" type="submit">Update</button>
-                </form>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
 {% endblock %}
