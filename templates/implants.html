@@ -1,7 +1,62 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Dental Implants</h1>
-<p>{{ clinic.implant_note }}</p>
-<p>We'll review your desires, take any necessary X-rays, provide and discuss options. A consultation and exam are required.</p>
-<a class="btn" href="{{ url_for('contact_get') }}">Request an Implant Consultation</a>
+
+<div class="implants-page">
+    <h1>Dental Implants</h1>
+    <p>{{ clinic.implant }}</p>
+
+    <!-- CTA Button -->
+    <div class="implant-cta">
+        <a class="btn" href="{{ url_for('contact_get') }}">Request an Implant Consultation</a>
+    </div>
+
+    <div class="implant-info">
+        <h2>What is an implant procedure like?</h2>
+        <div class="implant-grid">
+            <div class="implant-card">
+                <h3>1. Consultation</h3>
+                <p>A comprehensive exam and digital imaging will help to create a personalized implant plan.</p>
+            </div>
+            <div class="implant-card">
+                <h3>2. Surgery</h3>
+                <p>Surgery can be done in one or two appointments depending on your condition.</p>
+            </div>
+            <div class="implant-card">
+                <h3>3. Healing & Checkup</h3>
+                <p>After surgery, we monitor healing and ensure the implant is integrating properly with the bone.</p>
+            </div>
+            <div class="implant-card">
+                <h3>4. Impression</h3>
+                <p>After 3-6 months from the surgery, impressions are taken to design a custom crown that matches your natural teeth.</p>
+            </div>
+            <div class="implant-card">
+                <h3>5. Crown Cementation</h3>
+                <p>The final crown is securely placed, restoring your smile's function, comfort, and appearance.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="implant-info">
+        <h2>Why Choose Dental Implants?</h2>
+        <div class="implant-grid">
+            <div class="implant-card">
+                <h3>Natural Look & Feel</h3>
+                <p>Implants look, feel, and function just like your natural teeth</p>
+            </div>
+            <div class="implant-card">
+                <h3>Long-Lasting</h3>
+                <p>With proper care, implants can last a lifetime</p>
+            </div>
+            <div class="implant-card">
+                <h3>Improved Confidence</h3>
+                <p>Eat, speak, and smile with complete confidence</p>
+            </div>
+            <div class="implant-card">
+                <h3>Preserve Bone Health</h3>
+                <p>Prevents bone loss and maintains facial structure</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
