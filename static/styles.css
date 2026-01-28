@@ -1,65 +1,83 @@
-body { 
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
-    margin:0; 
-    color: #4682B4; 
-    font-size: 18px;
-}
-
 /* =========================
-   HOME PAGE
+   GLOBAL STYLES
 ========================= */
 
+body { 
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+    margin: 0; 
+    color: #073961; 
+    font-size: 18px;
+    font-weight: 450;
+    background-image: url("uploads/images/blue-background.jpg");
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+h1 {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 800;
+    color: #2d4977;
+    margin-bottom: 30px;
+}
+
+h2 {
+    font-size: 42px;
+    font-weight: 750;
+    color: #2d4977;
+    margin-bottom: 20px;
+    margin-top: 0px;
+    text-shadow: 0 4px 12px rgba(218, 218, 115, 0.25);
+}
+
+h3 {
+    font-size: 30px;
+    font-weight: 750;
+    color: #2d4977;
+}
+
 .container { 
-    max-width:960px; 
-    margin:0 auto; 
+    max-width: 960px; 
+    margin: 0 auto; 
     padding: 16px; 
 }
 
-/* Header container */
+.hidden { 
+    display: none; 
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
 .nav {
     position: sticky;
     top: 0;
     z-index: 1000;
-
-    background: linear-gradient(
-        180deg,
-        #114570 3%,   /* Deep Navy */
-        #f1e4d1 30%,  /* Warm Beige */
-        #ffffff 60%,  /* Pure White Bridge */
-        #b1d2f3 96%   /* Light Sky Blue */
-    );
-
+    background: linear-gradient(135deg, #ffe596, #7bd6fd);
     box-shadow: 0 4px 12px rgba(10, 45, 104, 0.25);
 }
 
-/* Accent top bar */
 .nav::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
-
     width: 100%;
     height: 3px;
-
-    background: linear-gradient(
-        90deg,
-        #0b3f6e,
-        rgb(63, 45, 12)
-    );
+    background: linear-gradient(90deg, #0b3f6e, rgb(63, 45, 12));
 }
 
-/* Inner layout */
 .nav-inner {
     max-width: 1200px;
     margin: 0 auto;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-/* Logo */
 .logo-img {
     height: 60px;
     margin-block: 10px;
@@ -67,10 +85,6 @@ body {
     display: block;
     border-radius: 5px;
 }
-
-/* =========================
-   NAVIGATION BAR
-========================= */
 
 .nav-links {
     padding: 16px 30px;
@@ -82,31 +96,21 @@ body {
 .nav-links a {
     position: relative;
     text-decoration: none;
-
-    font-size: 15px;
+    font-size: 20px;
     font-weight: bold;
     letter-spacing: 0.3px;
     color: rgb(63, 45, 12);
-
     padding: 6px 0;
 }
-
 
 .nav-links a::after {
     content: "";
     position: absolute;
     left: 50%;
     bottom: -6px;
-
     width: 0;
     height: 3px;
-
-    background: linear-gradient(
-        90deg,
-        #0a2d68,
-        #3b82f6
-    );
-
+    background: linear-gradient(90deg, #0a2d68, #3b82f6);
     border-radius: 999px;
     transform: translateX(-50%);
     transition: width 0.3s ease;
@@ -117,23 +121,353 @@ body {
     width: 100%;
 }
 
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn { 
+    padding: 12px 20px; 
+    text-decoration: none; 
+    background: #045486; 
+    color: #fff; 
+    border-radius: 10px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: #5589b9;
+}
+
+.btn.secondary { 
+    background: #fbe7a1; 
+    color: #111; 
+}
+
+.btn.secondary:hover {
+    background: #d9ad0c; 
+}
+
+button.btn {
+    display: block;
+    width: 100%;
+    max-width: 460px;
+    margin: 50px auto 0;
+    padding: 18px;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #4682B4, #83c9f4);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 20px 40px rgba(70,130,180,0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+}
+
+button.btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 25px 50px rgba(70,130,180,0.5);
+    background: linear-gradient(135deg, #3a6fa0, #6bb8e8);
+}
+
+button.btn:active {
+    transform: translateY(-1px) scale(1);
+}
+
+.btn-logout {
+    background: linear-gradient(135deg, #d32f2f, #f44336);
+    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
+}
+
+.btn-logout:hover {
+    background: linear-gradient(135deg, #b71c1c, #d32f2f);
+    box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4);
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer { 
+    border-top: 1px solid #eee; 
+    margin-top: 24px; 
+    padding: 18px 0;
+    text-align: center;
+}
+
+.disclaimer { 
+    font-size: 12px; 
+    opacity: 0.8; 
+    margin-top: 8px; 
+    text-align: center;
+}
+
+
+/* =========================
+   ALERTS & MESSAGES
+========================= */
+
+.alert { 
+    background: #ffe5e5;
+    color: #a33;
+    padding: 14px 18px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    border-left: 4px solid #d32f2f;
+    font-weight: 500;
+}
+
+.success {
+    background: linear-gradient(135deg, #e8f7ee, #d4f1e0);
+    color: #1f7a3a;
+    padding: 24px;
+    border-radius: 14px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 600;
+    border-left: 4px solid #4caf50;
+    box-shadow: 0 8px 20px rgba(31,122,58,0.15);
+}
+
+
+/* =========================
+   LAYOUT UTILITIES
+========================= */
+
+.grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 12px; 
+    margin: 18px 0; 
+}
+
+.row { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    gap: 12px; 
+}
+
+.inline { 
+    display: inline-flex; 
+    gap: 8px; 
+    align-items: center; 
+}
+
+
+/* =========================
+   CARDS
+========================= */
+
+.card { 
+    border: 1px solid #eee; 
+    border-radius: 14px; 
+    padding: 14px; 
+}
+
+.review-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.review-card {
+    border: 1px solid #eee;
+    border-radius: 14px;
+    padding: 12px;
+    background: #fff;
+}
+
+.review-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid #f2f2f2;
+}
+
+
+/* =========================
+   TABLES
+========================= */
+
+.table { 
+    width: 100%; 
+    border-collapse: collapse; 
+}
+
+.table th, 
+.table td { 
+    border-bottom: 1px solid #eee; 
+    padding: 10px; 
+    vertical-align: top; 
+}
+
+
+/* =========================
+   CHAT WINDOW
+========================= */
+
+.chat-toggle { 
+    position: fixed; 
+    bottom: 16px; 
+    right: 16px;
+    width: 50px; 
+    height: 48px; 
+    padding: 0;
+    border-radius: 50%; 
+    border: 1px solid #111; 
+    background: #89CFF0; 
+    color: #fff;
+    cursor: pointer; 
+    z-index: 9999; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 24px;
+}
+
+.chat-box { 
+    position: fixed; 
+    bottom: 72px; 
+    right: 16px; 
+    width: 320px; 
+    max-width: min(360px, calc(100vw - 32px));
+    font-weight: 400;
+    font-size: 14px;
+    border: 1.2px solid #89CFF0;
+    border-radius: 5px;
+    background-color: rgba(211, 236, 248, 0.9);
+    gap: 10px;
+}
+
+.chat-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 8px 10px; 
+    border-bottom: 1px solid #89CFF0; 
+    font-weight: 700;
+}
+
+.chat-close { 
+    border: none; 
+    font-size: 20px; 
+    cursor: pointer; 
+    color: #2d4977;
+}
+
+.chat-messages { 
+    height: 260px; 
+    overflow-y: auto; 
+    padding: 10px 12px; 
+    display: flex; 
+    flex-direction: column;
+    gap: 12px;
+}
+
+.msg { 
+    max-width: 80%;
+    display: inline-block;
+    width: fit-content;
+    padding: 8px 12px;
+    border-radius: 18px;
+    border: 1px solid #4682B4;
+    line-height: 1.3;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.msg.user { 
+    background-color: #4682B4;
+    color: wheat;
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+}
+
+.msg.bot { 
+    background: #fafafa; 
+    justify-self: flex-start;
+    border-bottom-left-radius: 6px;
+}
+
+.msg a {
+    color: #1a73e8;
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.chat-input { 
+    display: flex; 
+    gap: 8px; 
+    padding: 10px 12px; 
+    border-top: 1px solid #eee; 
+}
+
+.chat-input input { 
+    flex: 1; 
+    padding: 10px; 
+    border-radius: 12px; 
+    border: 1px solid #ddd; 
+}
+
+.chat-input button { 
+    padding: 10px 12px; 
+    border-radius: 12px; 
+    border: 1px solid #4682B4; 
+    background: #4682B4; 
+    color: whitesmoke; 
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chat-mini-disclaimer { 
+    font-size: 11px; 
+    opacity: 0.75; 
+    padding: 8px 12px; 
+    border-top: 1px solid #89CFF0; 
+}
+
+
+/* =========================
+   HOME PAGE
+========================= */
+
 .hero {
     text-align: center;
 }
 
 .hero h1 {
-    color: #83c9f4;
     font-weight: 1000;
     font-size: 55px;
-    text-shadow: 
-        1px 1px 0 #2d4977, 
-        2px 2px 0 #2d4977, 
-        3px 3px 0 #2d4977, 
-        4px 4px 0 #2d4977;
     margin-top: 20px;
     margin-bottom: 0;
-
+    
+    background: linear-gradient(
+        45deg,
+        #f8eba6,
+        #72aedf,
+        #2d4977,
+        #eba80e
+    );
+    background-size: 300% 300%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-shift 4s ease infinite;
 }
+
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
 .hero p {
     color: #2d4977;
     font-size: 20px;
@@ -142,46 +476,23 @@ body {
     margin-top: 10px;
     margin-bottom: 35px;
 }
+
 .cta-row { 
     display: flex;
     gap: 15px;
     flex-wrap: wrap;
     justify-content: center;
-    margin-bottom: 40px;
+    margin-bottom: 80px;
 }
-.btn { 
-    padding: 12px 20px; 
-    text-decoration: none; 
-    background: #7393B3; 
-    color: #fff; 
-    border-radius: 10px;
-    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
-    font-weight: 500;
-    cursor: pointer;
-}
-.btn:hover {
-    background-color: #82a1c0;
-}
-
-.btn.secondary { 
-    background: #fbe7a1; 
-    color: #111; 
-}
-.btn.secondary:hover {
-    background: #fadc6f; 
-}
-
-/* =========================
-   ABOUT US
-========================= */
 
 .about-us {
     display: block;
     line-height: 1.5;
 }
 
+
 /* =========================
-   FACILITIES
+   FACILITIES SLIDER
 ========================= */
 
 .image-slider {
@@ -192,6 +503,7 @@ body {
     position: relative;
     max-width: 48rem;
     margin: 0 auto;
+    margin-bottom: 80px;
 }
 
 .facility {
@@ -229,8 +541,15 @@ body {
     transition: opacity ease 250ms;
 }
 
-/* Meet our dentists */
-.meet { margin-top: px; }
+
+/* =========================
+   DENTIST PROFILES
+========================= */
+
+.meet { 
+    margin-bottom: 150px; 
+}
+
 .dentist-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -249,6 +568,12 @@ body {
     max-width: 350px;
     border-radius: 20px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.dentist-photo:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.12);
 }
 
 .dentist-info {
@@ -272,229 +597,45 @@ body {
 }
 
 .chip {
-    font-size: 16px;
+    /* font-size: 16px; */
     border: 1px solid #111;
-    padding: 4px 8px;
+    padding: 6px 12px;
     border-radius: 999px;
     background: #4682B4;
     color: wheat;
     text-align: center;
-}
-
-
-/* Mobile layout */
-@media (max-width: 768px) {
-    .dentist-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .dentist-card,
-    .dentist-info {
-        grid-column: 1 !important;
-        text-align: center;
-    }
-}
-
-.grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
-    gap: 12px; 
-    margin: 18px 0; 
-}
-.card { 
-    border: 1px solid #eee; 
-    border-radius: 14px; 
-    padding: 14px; 
-}
-.footer { 
-    border-top: 1px solif #eee; 
-    margin-top: 24px; 
-    padding: 18px 0; 
-}
-.disclaimer { 
-    font-size: 12px; 
-    opacity: 0.8; 
-    margin-top: 8px; 
-}
-.form { 
-    display: grid; 
-    gap: 12px; 
-    max-width: 520px; 
-}
-.form input, .form select, .form textarea { 
-    width: 100%; 
-    padding: 10px; 
-    border-radius: 10px; 
-    border: 1px solid #ddd; 
-}
-.alert { 
-    padding: 10px; 
-    border: 1px solid #f2b8b5; 
-    background: #fdecea; 
-    border-radius: 10px; 
-}
-.success { 
-    padding: 10px; 
-    border: 1px solid #b7ebc6; 
-    background: #ecfdf3; 
-    border-radius: 10px; 
-}
-.table { 
-    width: 100%; 
-    border-collapse: collapse; 
-}
-.table th, .table td { 
-    border-bottom: 1px solid #eee; 
-    padding: 10px; 
-    vertical-align: top; 
-}
-.row { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    gap: 12px; 
-}
-.inline { 
-    display: inline-flex; 
-    gap:  8px; 
-    align-items: center; 
-}
-.review-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
-}
-.review-card {
-    border: 1px solid #eee;
-    border-radius: 14px;
-    padding: 12px;
-    background: #fff;
-}
-
-.review-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-    border: 1px solid #f2f2f2;
+    font-weight: bold;
 }
 
 
 /* =========================
-   CHAT WINDOW
+   INSURANCE SECTION
 ========================= */
 
-.chat-toggle { 
-    position: fixed; 
-    bottom: 16px; 
-    right: 16px;
-    width: 50px; 
-    height: 48px; 
-    padding: 0;
-    border-radius: 50%; 
-    border: 1px solid #111; 
-    background: #89CFF0; 
-    color: #fff;
-    cursor: pointer; 
-    z-index: 9999; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    font-size: 24px;
+.insurance {
+    margin-bottom: 80px;
 }
-.chat-box { 
-    position: fixed; 
-    bottom: 72px; 
-    right: 16px; 
-    width: 320px; 
-    max-width: min(360px, calc(100vw - 32px));
-    font-weight: 400;
-    font-size: 14px;
-    border: 1.2px solid #89CFF0;
-    border-radius: 5px;
-    background-color: rgba(211, 236, 248, 0.9);
-    gap: 10px;
+
+.insurance-info {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
 }
-.hidden { display: none; }
-.chat-header { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 8px 10px; 
-    border-bottom: 1px solid #89CFF0; 
-    font-weight: 700;
+
+.insurance-photo {
+    width: 100%;
+    max-width: 700px;
+    border-radius: 16px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    object-fit: cover;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
-.chat-close { 
-    border: none; 
-    font-size: 20px; 
-    cursor: pointer; 
-    color: #2d4977
+
+.insurance-photo:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 35px rgba(0,0,0,0.12);
 }
-.chat-messages { 
-    height: 260px; 
-    overflow-y: auto; 
-    padding: 10px 12px; 
-    display: flex; 
-    flex-direction: column;
-    gap: 12px;
-    
-}
-.msg { 
-    max-width: 80%;
-    display: inline-block;
-    width: fit-content;
-    padding: 8px 12px;
-    border-radius: 18px;
-    border: 1px solid #4682B4;
-    line-height: 1.3;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-}
-.msg.user { 
-    background-color: #4682B4;
-    color: wheat;
-    align-self: flex-end;
-    border-bottom-right-radius: 6px;
-}
-.msg.bot { 
-    background: #fafafa; 
-    justify-self: flex-start;
-    border-bottom-left-radius: 6px;
-}
-.msg a {
-    color: #1a73e8;
-    text-decoration: underline;
-    font-weight: 600;
-}
-.chat-input { 
-    display: flex; 
-    gap: 8px; 
-    padding: 10px 12px; 
-    border-top: 1px solid #eee; 
-}
-.chat-input input { 
-    flex: 1; 
-    padding: 10px; 
-    border-radius: 12px; 
-    border: 1px solid #ddd; 
-}
-.chat-input button { 
-    padding: 10px 12px; 
-    border-radius: 12px; 
-    border: 1px solid #4682B4; 
-    background: #4682B4; 
-    color: whitesmoke; 
-    cursor: pointer;
-    font-weight: bold;
-}
-.chat-mini-disclaimer { 
-    font-size: 11px; 
-    opacity: 0.75; 
-    padding: 8px 12px; 
-    border-top: 1px solid #89CFF0; 
-}
+
 
 
 /* =========================
@@ -510,13 +651,6 @@ body {
 .service-header {
     text-align: center;
     margin-bottom: 50px;
-}
-
-.service-header h1 {
-    font-size: 42px;
-    font-weight: 800;
-    color: #2d4977;
-    margin-bottom: 10px;
 }
 
 .service-header p {
@@ -551,6 +685,16 @@ body {
     object-fit: cover;
 }
 
+.service-icon {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    background: #f5f8fc;
+    color: #0a2d5f;
+}
+
 .service-name {
     font-size: 1.2rem;
     margin: 1rem 1.25rem 0.5rem;
@@ -563,50 +707,7 @@ body {
     margin: 0 1.25rem 1.5rem;
     line-height: 1.6;
 }
-.service-icon {
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    background: #f5f8fc;
-    color: #0a2d5f;
-}
 
-/* =========================
-   INSURANCE INFO
-========================= */
-
-.insurance {
-    max-width: 1000px;
-    margin-top: 80px;
-    padding-top: 10px;
-    padding-bottom: 40px;
-    padding-left: 30px;
-    padding-right: 30px;
-    background: #f7f9fc;
-    border-radius: 24px;
-}
-
-.insurance-info {
-    display: flex;
-    justify-content: center;
-    padding-top: 10px;
-}
-
-.insurance-photo {
-    width: 100%;
-    max-width: 700px;
-    border-radius: 16px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
-    object-fit: cover;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.insurance-photo:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 18px 35px rgba(0,0,0,0.12);
-}
 
 /* =========================
    NEW PATIENT PAGE
@@ -636,327 +737,6 @@ body {
     max-width: 600px;
     margin: 0 auto;
 }
-
-/* Form container */
-
-.form {
-    max-width: 1200px;
-    margin: 0 auto;
-    background: #ffffff;
-    padding: 48px;
-    border-radius: 28px;
-    box-shadow: 0 30px 70px rgba(10, 45, 104, 0.08);
-    border-left: 6px solid #4682B4;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-left 0.3s ease;
-}
-
-.form:hover {
-    border-left: 6px solid #83c9f4;
-    transform: translateY(-2px);
-    box-shadow: 0 40px 80px rgba(10, 45, 104, 0.15);
-}
-
-/* Form sections */
-.form-section {
-    width: 750px;
-    max-width: 95%;
-    margin: 0 auto 40px;
-    padding: 32px;
-    background: #e3f7fc;
-    border-radius: 20px;
-    box-shadow: 0 20px 50px rgba(10, 45, 104, 0.08);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-}
-
-.form-section:nth-child(even) {
-    background: #fbf6d8;
-}
-
-.form-section:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 30px 60px rgba(10, 45, 104, 0.12);
-}
-
-/* Section headers */
-.form-section h2 {
-    color: #114570;
-    font-weight: 700;
-    font-size: 28px;
-    margin-bottom: 16px;
-    border-bottom: 2px solid #4682B4;
-    padding-bottom: 20px;
-    text-align: center;
-}
-
-/* Smaller headers */
-.form-section h3 {
-    color: #4682B4;
-    font-weight: 600;
-    font-size: 20px;
-    margin-top: 24px;
-    margin-bottom: 12px;
-}
-
-/* Grid layout */
-
-.two-col,
-.three-col {
-    margin-right: 20px;
-}
-
-
-.two-col {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 50px;
-}
-
-.three-col {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 40px;
-}
-
-/* Single-column direct children of form-section */
-.form-section > label:not(.check-item):not(.inline-radio label) {
-    margin-right: 20px;
-}
-
-/* Form inputs */
-
-.form label {
-    display: block;
-    font-size: 14px;
-    font-weight: 600;
-    color: #2d4977;
-    margin-top: 10px;
-    margin-bottom: 0px;
-}
-
-.form input,
-.form textarea,
-.form select {
-    width: 100%;
-    margin-top: 6px;
-    padding: 14px 16px;
-    font-size: 15px;
-    border-radius: 14px;
-    border: 1px solid #dbe3f0;
-    background: #fff;
-    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-}
-
-.form textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.form input::placeholder,
-.form textarea::placeholder {
-    color: #9ab0cc;
-}
-
-.form input:focus,
-.form textarea:focus,
-.form select:focus {
-    outline: none;
-    border-color: #4682B4;
-    box-shadow: 0 0 0 4px rgba(70,130,180,0.15);
-    transform: translateY(-1px);
-}
-
-/* Radio buttons */
-
-.inline-radio {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 8px;
-}
-
-.inline-radio label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 14px;
-    background: #f4f7fc;
-    border-radius: 999px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: background 0.2s ease, transform 0.2s ease;
-    border: 2px solid transparent;
-}
-
-.inline-radio label:hover {
-    background: #e8f1fb;
-    transform: translateY(-1px);
-    border-color: #c8dff5;
-}
-
-.inline-radio input[type="radio"] {
-    width: auto;
-    margin: 0;
-    cursor: pointer;
-}
-
-/* Checkbox buttons */
-
-.check-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
-    margin-right: 10px;
-}
-
-.check-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 10px;
-    border-radius: 16px;
-    border: 2px solid #e3eaf4;
-    background: #fafcff;
-    font-size: 10px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.check-item:hover {
-    background: #f0f7ff;
-    border-color: #4682B4;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(70,130,180,0.1);
-}
-
-.check-item input[type="checkbox"] {
-    width: auto;
-    margin: 0;
-    cursor: pointer;
-}
-
-.check-item input[type="checkbox"]:checked + span,
-.check-item:has(input[type="checkbox"]:checked) {
-    color: #114570;
-    font-weight: 600;
-}
-
-/* Signature fields */
-
-.form-section h3 + label,
-.form-section label:has(input[name^="sig_"]) {
-    background: rgba(70,130,180,0.05);
-    padding: 16px;
-    border-radius: 12px;
-    border-left: 4px solid #4682B4;
-    margin-top: 16px;
-}
-
-
-.two-col textarea {
-    min-height: 120px;
-}
-
-.form textarea:focus {
-    min-height: 140px;
-}
-
-/* Alerts */
-
-.alert {
-    background: #ffe5e5;
-    color: #a33;
-    padding: 14px 18px;
-    border-radius: 14px;
-    margin-bottom: 24px;
-    border-left: 4px solid #d32f2f;
-    font-weight: 500;
-}
-
-.success {
-    background: linear-gradient(135deg, #e8f7ee, #d4f1e0);
-    color: #1f7a3a;
-    padding: 24px;
-    border-radius: 14px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 600;
-    border-left: 4px solid #4caf50;
-    box-shadow: 0 8px 20px rgba(31,122,58,0.15);
-}
-
-/* Insurance Info Section */
-
-#pi_block,
-#pi_subscriber_block {
-    margin-top: 20px;
-    padding: 20px;
-    background: rgba(255,255,255,0.5);
-    border-radius: 12px;
-    border: 2px dashed #4682B4;
-}
-
-/* Agreement checkbox */
-
-.form-section label:has(input[type="checkbox"][name="agree"]) {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 20px;
-    background: linear-gradient(135deg, #fff9e6, #fffbf0);
-    border: 2px solid #ffd54f;
-    border-radius: 14px;
-    font-size: 15px;
-    font-weight: 600;
-    color: #2d4977;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.form-section label:has(input[type="checkbox"][name="agree"]):hover {
-    background: linear-gradient(135deg, #fff5d6, #fff9e6);
-    border-color: #ffc107;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(255,193,7,0.2);
-}
-
-.form-section label:has(input[type="checkbox"][name="agree"]) input {
-    width: auto;
-    margin: 0;
-    cursor: pointer;
-}
-
-/* Submit button */
-
-button.btn {
-    display: block;
-    width: 100%;
-    max-width: 460px;
-    margin: 50px auto 0;
-    padding: 18px;
-    font-size: 18px;
-    font-weight: 800;
-    border-radius: 999px;
-    border: none;
-    background: linear-gradient(135deg, #4682B4, #83c9f4);
-    color: #fff;
-    cursor: pointer;
-    box-shadow: 0 20px 40px rgba(70,130,180,0.35);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
-}
-
-button.btn:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 25px 50px rgba(70,130,180,0.5);
-    background: linear-gradient(135deg, #3a6fa0, #6bb8e8);
-}
-
-button.btn:active {
-    transform: translateY(-1px) scale(1);
-}
-
-/* Note Section */
 
 .np-notes {
     max-width: 1000px;
@@ -1006,32 +786,278 @@ button.btn:active {
     font-size: 18px;
 }
 
+
 /* =========================
-   RESPONSIVE ADJUSTMENTS
+   FORMS - GENERAL
 ========================= */
 
-@media (max-width: 768px) {
-    .form {
-        padding: 24px;
-    }
-    
-    .form-section {
-        padding: 20px;
-    }
-    
-    .two-col,
-    .three-col {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .check-grid {
-        grid-template-columns: 1fr;
-    }
+.form {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 48px;
+    border-radius: 28px;
+    box-shadow: 0 30px 70px rgba(10, 45, 104, 0.08);
+    border-left: 6px solid #4682B4;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-left 0.3s ease;
 }
 
+.form:hover {
+    border-left: 6px solid #83c9f4;
+    transform: translateY(-2px);
+    box-shadow: 0 40px 80px rgba(10, 45, 104, 0.15);
+}
+
+.form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d4977;
+    margin-top: 10px;
+    margin-bottom: 0px;
+}
+
+.form input,
+.form textarea,
+.form select {
+    width: 100%;
+    margin-top: 6px;
+    padding: 14px 16px;
+    font-size: 15px;
+    border-radius: 14px;
+    border: 1px solid #dbe3f0;
+    background: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form input::placeholder,
+.form textarea::placeholder {
+    color: #9ab0cc;
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+    outline: none;
+    border-color: #4682B4;
+    box-shadow: 0 0 0 4px rgba(70,130,180,0.15);
+    transform: translateY(-1px);
+}
+
+.form textarea:focus {
+    min-height: 140px;
+}
+
+
 /* =========================
-   ADMIN LOGIN PAGE
+   FORM SECTIONS
+========================= */
+
+.form-section {
+    width: 750px;
+    max-width: 95%;
+    margin: 0 auto 40px;
+    padding: 32px;
+    background: #e3f7fc;
+    border-radius: 20px;
+    box-shadow: 0 20px 50px rgba(10, 45, 104, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+}
+
+.form-section:nth-child(even) {
+    background: #fbf6d8;
+}
+
+.form-section:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 30px 60px rgba(10, 45, 104, 0.12);
+}
+
+.form-section h2 {
+    color: #114570;
+    font-weight: 700;
+    font-size: 28px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #4682B4;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.form-section h3 {
+    color: #4682B4;
+    font-weight: 600;
+    font-size: 20px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+}
+
+.form-section > label:not(.check-item):not(.inline-radio label) {
+    margin-right: 20px;
+}
+
+.form-section h3 + label,
+.form-section label:has(input[name^="sig_"]) {
+    background: rgba(70,130,180,0.05);
+    padding: 16px;
+    border-radius: 12px;
+    border-left: 4px solid #4682B4;
+    margin-top: 16px;
+}
+
+.form-section label:has(input[type="checkbox"][name="agree"]) {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 20px;
+    background: linear-gradient(135deg, #fff9e6, #fffbf0);
+    border: 2px solid #ffd54f;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2d4977;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-section label:has(input[type="checkbox"][name="agree"]):hover {
+    background: linear-gradient(135deg, #fff5d6, #fff9e6);
+    border-color: #ffc107;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255,193,7,0.2);
+}
+
+.form-section label:has(input[type="checkbox"][name="agree"]) input {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+
+/* =========================
+   FORM LAYOUTS
+========================= */
+
+.two-col,
+.three-col {
+    margin-right: 20px;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 50px;
+}
+
+.two-col textarea {
+    min-height: 120px;
+}
+
+.three-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 40px;
+}
+
+
+/* =========================
+   FORM CONTROLS
+========================= */
+
+.inline-radio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.inline-radio label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    background: #f4f7fc;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.2s ease, transform 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.inline-radio label:hover {
+    background: #e8f1fb;
+    transform: translateY(-1px);
+    border-color: #c8dff5;
+}
+
+.inline-radio input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.check-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+    margin-right: 10px;
+}
+
+.check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border-radius: 16px;
+    border: 2px solid #e3eaf4;
+    background: #fafcff;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.check-item:hover {
+    background: #f0f7ff;
+    border-color: #4682B4;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(70,130,180,0.1);
+}
+
+.check-item input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+.check-item input[type="checkbox"]:checked + span,
+.check-item:has(input[type="checkbox"]:checked) {
+    color: #114570;
+    font-weight: 600;
+}
+
+
+/* =========================
+   FORM - INSURANCE BLOCKS
+========================= */
+
+#pi_block,
+#pi_subscriber_block {
+    margin-top: 20px;
+    padding: 20px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 12px;
+    border: 2px dashed #4682B4;
+}
+
+
+/* =========================
+   ADMIN - LOGIN PAGE
 ========================= */
 
 .admin-login-container {
@@ -1040,12 +1066,7 @@ button.btn:active {
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
-    background: linear-gradient(
-        135deg,
-        #f6f9fd 0%,
-        #e8f1fb 50%,
-        #d4e8f7 100%
-    );
+    background: linear-gradient(135deg, #f6f9fd 0%, #e8f1fb 50%, #d4e8f7 100%);
 }
 
 .admin-login-card {
@@ -1069,7 +1090,6 @@ button.btn:active {
     border-left: 6px solid #83c9f4;
 }
 
-/* Header */
 .admin-header {
     text-align: center;
     margin-bottom: 36px;
@@ -1101,7 +1121,6 @@ button.btn:active {
     font-weight: 500;
 }
 
-/* Form */
 .admin-form {
     display: flex;
     flex-direction: column;
@@ -1144,7 +1163,6 @@ button.btn:active {
     transform: translateY(-1px);
 }
 
-/* Button */
 .admin-btn {
     width: 100%;
     padding: 16px 24px;
@@ -1185,24 +1203,8 @@ button.btn:active {
 }
 
 
-/* Responsive */
-@media (max-width: 768px) {
-    .admin-login-card {
-        padding: 32px 24px;
-    }
-    
-    .admin-header h1 {
-        font-size: 28px;
-    }
-    
-    .admin-icon {
-        font-size: 48px;
-    }
-}
-
-
 /* =========================
-   ADMIN PAGES - GENERAL
+   ADMIN - DASHBOARD
 ========================= */
 
 .admin-container {
@@ -1232,18 +1234,9 @@ button.btn:active {
     align-items: center;
 }
 
-.btn-logout {
-    background: linear-gradient(135deg, #d32f2f, #f44336);
-    box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3);
-}
-
-.btn-logout:hover {
-    background: linear-gradient(135deg, #b71c1c, #d32f2f);
-    box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4);
-}
 
 /* =========================
-   STATS CARDS
+   ADMIN - STATS CARDS
 ========================= */
 
 .stats-grid {
@@ -1295,8 +1288,9 @@ button.btn:active {
     line-height: 1;
 }
 
+
 /* =========================
-   REQUESTS TABLE
+   ADMIN - REQUESTS TABLE
 ========================= */
 
 .requests-table-container {
@@ -1346,7 +1340,6 @@ button.btn:active {
     color: #2d4977;
 }
 
-/* Row highlighting by status */
 .request-row.status-new {
     background: rgba(33, 150, 243, 0.02);
 }
@@ -1360,7 +1353,6 @@ button.btn:active {
     opacity: 0.7;
 }
 
-/* Cell specific styling */
 .cell-date {
     min-width: 80px;
 }
@@ -1394,15 +1386,6 @@ button.btn:active {
     max-width: 130px;
 }
 
-.service-badge {
-    display: inline-block;
-    padding: 4px 12px;
-    background: #e8f1fb;
-    color: #2d4977;
-    border-radius: 12px;
-    font-size: 13px;
-}
-
 .cell-note {
     max-width: 200px;
 }
@@ -1418,7 +1401,15 @@ button.btn:active {
     color: #cbd5e0;
 }
 
-/* Status badges */
+.service-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #e8f1fb;
+    color: #2d4977;
+    border-radius: 12px;
+    font-size: 13px;
+}
+
 .status-badge {
     display: inline-block;
     padding: 6px 12px;
@@ -1445,7 +1436,6 @@ button.btn:active {
     color: #2E7D32;
 }
 
-/* Status form */
 .status-form {
     display: flex;
     align-items: center;
@@ -1475,7 +1465,6 @@ button.btn:active {
     box-shadow: 0 0 0 3px rgba(70, 130, 180, 0.1);
 }
 
-/* Empty state */
 .empty-state {
     text-align: center;
     padding: 80px 20px;
@@ -1504,7 +1493,116 @@ button.btn:active {
 }
 
 /* =========================
-   RESPONSIVE
+   IMPLANTS PAGE
+========================= */
+
+.implants-page {
+    max-width: 1200px;
+    padding: 40px 20px;
+}
+
+.implants-page h1 {
+    margin-bottom: 0px;
+}
+
+.implants-page > p {
+    margin-top: 0px;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* CTA Button */
+.implant-cta {
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.implant-cta .btn {
+    display: inline-block;
+    padding: 18px 40px;
+    font-size: 20px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #4682B4, #83c9f4);
+    color: #fff;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 8px 20px rgba(70, 130, 180, 0.3);
+    transition: all 0.3s ease;
+}
+
+.implant-cta .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(70, 130, 180, 0.4);
+    background: linear-gradient(135deg, #3a6fa0, #6bb8e8);
+}
+
+/* Benefits Section - Styled like np-notes */
+.implant-info {
+    max-width: 1000px;
+    margin: 80px auto;
+    padding: 40px;
+    background: linear-gradient(135deg, #f6f9fd, #e8f1fb);
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(10, 45, 104, 0.1);
+    border-left: 6px solid #4682B4;
+}
+
+.implant-info h2 {
+    font-size: 28px;
+    color: #2d4977;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.implant-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.implant-card {
+    font-size: 16px;
+    padding: 12px 12px 12px 36px;
+    margin-bottom: 0;
+    position: relative;
+    color: #3d5f8a;
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.implant-card:hover {
+    background: rgba(255,255,255,0.9);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(70,130,180,0.1);
+}
+
+.implant-card::before {
+    content: "✓";
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    color: #4682B4;
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.implant-card h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #3d5f8a;
+    margin: 0 0 4px 0;
+}
+
+.implant-card p {
+    font-size: 15px;
+    color: #3d5f8a;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* =========================
+   RESPONSIVE DESIGN
 ========================= */
 
 @media (max-width: 1200px) {
@@ -1519,6 +1617,50 @@ button.btn:active {
 }
 
 @media (max-width: 768px) {
+    /* Dentist Grid */
+    .dentist-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dentist-card,
+    .dentist-info {
+        grid-column: 1 !important;
+        text-align: center;
+    }
+
+    /* Forms */
+    .form {
+        padding: 24px;
+    }
+    
+    .form-section {
+        padding: 20px;
+    }
+    
+    .two-col,
+    .three-col {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .check-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Admin Login */
+    .admin-login-card {
+        padding: 32px 24px;
+    }
+    
+    .admin-header h1 {
+        font-size: 28px;
+    }
+    
+    .admin-icon {
+        font-size: 48px;
+    }
+
+    /* Admin Dashboard */
     .admin-page-header {
         flex-direction: column;
         gap: 20px;
@@ -1537,7 +1679,6 @@ button.btn:active {
         grid-template-columns: 1fr 1fr;
     }
     
-    /* Make table scrollable on mobile */
     .requests-table-container {
         overflow-x: auto;
     }
@@ -1550,5 +1691,28 @@ button.btn:active {
 @media (max-width: 480px) {
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .implants-page h1 {
+        font-size: 32px;
+    }
+
+    .implants-page > p {
+        font-size: 16px;
+    }
+
+    .implant-cta .btn {
+        padding: 15px 30px;
+        font-size: 18px;
+    }
+
+    .implant-benefits {
+        padding: 30px 20px;
+    }
+
+    .implant-benefits h2 {
+        font-size: 24px;
     }
 }
