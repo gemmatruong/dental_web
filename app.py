@@ -12,7 +12,8 @@ from pdf_tools import fill_pdf
 from datetime import datetime, timedelta
 from flask_wtf.csrf import CSRFProtect
 import logging
-
+from groq import Groq
+from functools import wraps
 
 
 # read .env file (environment file) and get values from it
@@ -35,12 +36,16 @@ app.config["MAX_CONTENT_LENGTH"] = MAX_UPLOAD_MB * 1024 * 1024  # 8MB limit
 # Get value of variable named FLASK_SECRET_KEY from .env file
 # otherwise the default string
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-change-me")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+
+# Configure Groq
+if GROQ_API_KEY:
+    groq_client = Groq(api_key=GROQ_API_KEY)
 
 # Turn on CSFR globally protection
 csrf = CSRFProtect(app)
 
 
-# ADD THESE:
 app.config.update(
     SESSION_COOKIE_SECURE=True,       # Only send over HTTPS
     SESSION_COOKIE_HTTPONLY=True,     # Prevent JavaScript access
@@ -316,6 +321,19 @@ def admin_update_status(req_id: int):
     
     return redirect(url_for("admin_requests"))
 
+@app.post("/admin/requests/<int:req_id>/delete")
+def admin_delete_request(req_id: int):
+    require_admin()
+    
+    with get_conn() as conn:
+        row = conn.execute("SELECT * FROM appointment_requests WHERE id=?", (req_id,)).fetchone()
+
+        if row:
+            conn.execute("DELETE FROM appointment_requests WHERE id=?", (req_id, ))
+            conn.commit()
+            logging.info(f"Admin deleted appointment request #{req_id} - {row['name']} from IP {request.remote_addr}")
+    return redirect(url_for("admin_requests"))
+
 @app.get("/admin/reviews")
 def admin_reviews_get():
     require_admin()
@@ -422,6 +440,56 @@ def admin_logout():
 #------------------------------
 # CHATBOT safety + FAQ fallback
 #------------------------------
+
+# Helper to build context for AI chatbot
+def build_website_context():
+    """Build comprehensive website context for AI"""
+    return f"""
+=== CLINIC INFORMATION ===
+Name: {CLINIC['name']}
+Address: {CLINIC['address']}
+Phone: {CLINIC['phone']}
+Email: {CLINIC['email']}
+
+=== OFFICE HOURS ===
+{chr(10).join(f'{day}: {hrs}' for day, hrs in CLINIC['hours'].items())}
+
+=== SERVICES ===
+{chr(10).join(f'• {service}' for service in CLINIC['services'])}
+
+=== INSURANCE ===
+{CLINIC['insurance']}
+
+=== DENTAL IMPLANTS ===
+{CLINIC['implant']}
+
+=== NEW PATIENT INFO ===
+We welcome new patients! Our new patient form can be filled out online at /new-patients
+Please bring:
+- Valid ID
+- Insurance card (if applicable)  
+- List of current medications
+- Medical history information
+
+=== APPOINTMENT REQUESTS ===
+Patients can request appointments:
+1. Online through our Contact page: /contact
+2. By phone: {CLINIC['phone']}
+
+We typically respond to online requests within 24 hours.
+
+=== REVIEWS ===
+See what our patients are saying on our Reviews page: /reviews
+
+=== EMERGENCY PROTOCOL ===
+For dental emergencies including:
+- Uncontrolled bleeding
+- Difficulty breathing or swallowing
+- Severe pain or swelling
+- Facial trauma
+Please call {CLINIC['phone']} immediately or go to the nearest urgent care/ER.
+"""
+
 EMERGENCY_KEYWORDS = [
     "uncontrolled bleeding", "bleeding won't stop", "can't stop bleeding", "bleeding a lot",
     "can't breathe", "difficulty breathing", "trouble breathing", "hard to breathe",
@@ -442,7 +510,7 @@ FAQ = [
             ", ".join(f"\n{day}: {hrs}" for day, hrs in CLINIC["hours"].items())
         )
     },
-        {
+    {
         "name": "email",
         "patterns": ["email"],
         "response": lambda: f"Our email address is: {CLINIC['email']}"
@@ -489,11 +557,12 @@ FAQ = [
             "visit", "see the dentist", "consult", "consultation"
         ],
         "response": lambda: ('To request an appointment, please use our <a href="/contact" target="_blank">Contact</a> page. '
-                             'If your prefer, you can also call the office.')
+                             'If you prefer, you can also call the office.')
     }
 ]
 
 def faq_reply(msg: str):
+    """Fallback FAQ system if AI fails"""
     m = msg.lower()
     for intent in FAQ:
         for pattern in intent["patterns"]:
@@ -501,39 +570,205 @@ def faq_reply(msg: str):
                 return intent
     return None
 
+def build_website_context():
+    """Build comprehensive website context for AI"""
+    
+    # Extract services list with descriptions
+    services_text = []
+    for service in CLINIC['services']:
+        services_text.append(f"• {service['name']}: {service['description']}")
+    
+    # Extract dentist information
+    dentists_text = []
+    for dentist in CLINIC.get('dentists', []):
+        specialties = ", ".join(dentist.get('specialties', []))
+        dentists_text.append(
+            f"- {dentist['name']}, {dentist.get('title', 'DDS')}\n"
+            f"  Specialties: {specialties}\n"
+            f"  {dentist.get('bio', '')}"
+        )
+    
+    return f"""
+=== CLINIC INFORMATION ===
+Name: {CLINIC['office_name']}
+Address: {CLINIC['address']}
+Phone: {CLINIC['phone']}
+Email: {CLINIC['email']}
+Fax: {CLINIC.get('fax', '')}
+
+=== OFFICE HOURS ===
+{chr(10).join(f'{day}: {hrs}' for day, hrs in CLINIC['hours'].items())}
+
+=== OUR DENTISTS ===
+{chr(10).join(dentists_text)}
+
+=== SERVICES WE OFFER ===
+{chr(10).join(services_text)}
+
+=== INSURANCE INFORMATION ===
+{CLINIC['insurance']}
+
+=== DENTAL IMPLANTS ===
+{CLINIC['implant']}
+
+=== NEW PATIENT INFORMATION ===
+We welcome new patients! Our new patient form can be filled out online at /new-patients
+Please bring:
+- Valid ID
+- Insurance card (if applicable)  
+- List of current medications
+- Medical history information
+
+=== APPOINTMENT REQUESTS ===
+Patients can request appointments:
+1. Online through our Contact page: /contact
+2. By phone: {CLINIC['phone']}
+
+We typically respond to online requests within 24 hours.
+
+=== REVIEWS ===
+See what our patients are saying on our Reviews page: /reviews
+
+=== EMERGENCY PROTOCOL ===
+For dental emergencies including:
+- Uncontrolled bleeding
+- Difficulty breathing or swallowing
+- Severe pain or swelling
+- Facial trauma
+Please call {CLINIC['phone']} immediately or go to the nearest urgent care/ER.
+"""
+
+# Rate limiting for chatbot
+chat_rate_limits = {}
+
+def rate_limit_chat(max_per_minute=20):
+    """Rate limit chatbot requests to prevent abuse"""
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            ip = request.remote_addr
+            now = time.time()
+            
+            # Clean old entries (older than 60 seconds)
+            chat_rate_limits[ip] = [t for t in chat_rate_limits.get(ip, []) if now - t < 60]
+            
+            # Check limit
+            if len(chat_rate_limits.get(ip, [])) >= max_per_minute:
+                return jsonify({
+                    "reply": "Please wait a moment before sending another message. 😊"
+                }), 429
+            
+            # Record this request
+            chat_rate_limits.setdefault(ip, []).append(now)
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
+
 @app.post("/api/chat")
+@rate_limit_chat(max_per_minute=20)
 def api_chat():
+    """AI-powered chatbot endpoint using Groq AI"""
     data = request.get_json(silent=True) or {}
     user_msg = (data.get("message") or "").strip()
 
     if not user_msg:
-        return jsonify({"reply": "Please type the question and I'll help."})
+        return jsonify({"reply": "Please type a question and I'll help you! 😊"})
     
-    # Emergency
+    # Emergency check - immediate response (bypasses AI)
     if is_emergency(user_msg):
         return jsonify({"reply": 
-            f"If this is urgent, please call us immediately at {CLINIC['phone']}. "
-            "If you have uncontrolled bleeding, trouble breathing/swallowing or severe pain and swelling, please go to urgent care!"
+            f"⚠️ <strong>If this is urgent, please call us immediately at {CLINIC['phone']}.</strong><br><br>"
+            "If you have uncontrolled bleeding, trouble breathing/swallowing, or severe pain and swelling, "
+            "please go to urgent care or the ER right away!"
         })
     
-    # Medical advice guardrail
-    diagnosis = any(w in user_msg.lower() for w in [
-        "do i have", "should i", "is this", "am i", "infected", "infection", "swollen", "pus"
-    ])
+    # Try AI response with Groq
+    try:
+        if not GROQ_API_KEY:
+            raise ValueError("GROQ_API_KEY not configured - falling back to FAQ")
+        
+        # Build system message with all context
+        system_message = f"""You are a helpful, friendly assistant for {CLINIC['office_name']}, a dental office in Anaheim, California.
 
-    if diagnosis:
+{build_website_context()}
+
+RESPONSE GUIDELINES:
+1. Be warm, friendly, and professional - talk like a helpful receptionist
+2. Keep responses concise (2-3 sentences unless more detail is specifically requested)
+3. NEVER provide medical diagnoses or treatment recommendations - you're not a dentist
+4. For any health/medical concerns or symptoms, recommend calling the office at {CLINIC['phone']} to speak with a dentist or scheduling an appointment
+5. For emergency symptoms (severe pain, uncontrolled bleeding, facial swelling, breathing/swallowing difficulty), immediately tell them to call {CLINIC['phone']} or go to urgent care/ER
+6. Use HTML links when helpful:
+   - <a href="/contact">Contact page</a> for appointment requests
+   - <a href="/new-patients">New Patient form</a> for new patients
+   - <a href="/services">Services page</a> for service details
+   - <a href="/reviews">Reviews page</a> to see testimonials
+   - <a href="/implants">Implants page</a> for implant information
+7. Only answer questions about Union Dental Group, our services, policies, and general dental care information
+8. If asked about something not in your knowledge base, politely say you don't have that specific information and suggest calling the office at {CLINIC['phone']}
+9. Stay in character as a helpful dental office assistant - be conversational and personable
+10. Don't use emojis excessively - one or two per response is enough
+11. When discussing our dentists, mention their specialties: Dr. Kim specializes in implant surgery, dentures, and braces; Dr. Do is known for gentle dentistry and excellent root canal treatment
+12. We accept most PPO insurance and Denti-Cal (Medi-Cal) - always suggest patients call to verify their specific coverage
+
+Remember: Answer based ONLY on the information provided above. Be helpful, accurate, and always prioritize patient safety.
+"""
+        
+        # Generate response using Groq
+        chat_completion = groq_client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": system_message
+                },
+                {
+                    "role": "user",
+                    "content": user_msg
+                }
+            ],
+            model="llama-3.3-70b-versatile",  # Fast, accurate, and FREE!
+            temperature=0.7,
+            max_tokens=400,
+            top_p=0.9,
+            stream=False
+        )
+        
+        # Get the AI response
+        reply = chat_completion.choices[0].message.content
+        
+        # Log successful AI response (optional)
+        app.logger.info(f"AI chat - User: {user_msg[:50]}... | Response: {reply[:50]}...")
+        
+        return jsonify({"reply": reply})
+        
+    except Exception as e:
+        # Log the error
+        app.logger.error(f"Groq AI chat error: {str(e)}")
+        
+        # Fallback to FAQ system if AI fails
+        ans = faq_reply(user_msg)
+        if ans:
+            app.logger.info(f"Falling back to FAQ for: {user_msg[:50]}...")
+            return jsonify({"reply": ans['response']()})
+        
+        # Ultimate fallback - generic helpful message
         return jsonify({"reply": 
-            "I can't provide medical advice or diagnosis. "
-            f"If you're concerned, please call us at {CLINIC['phone']} to make appointment for an exam."
-            "I can also help submit an appointment request from the Contact page."
+            "I'm having trouble connecting to my knowledge base right now. 😅<br><br>"
+            "I can help with: hours, location, services, insurance info, and appointment requests.<br><br>"
+            f"Or you can call us directly at <strong>{CLINIC['phone']}</strong> and we'll be happy to help!"
         })
-    
-    # FAQ fallback
-    ans = faq_reply(user_msg)
-    if ans:
-        return jsonify({"reply": ans['response']()})
-    
-    return jsonify({"reply": "Here is what I can help you with: \n- hours\n- location\n- services\n- insurance info\n- appointment requests"})
+
 
 if __name__ == "__main__":
+    # Verify Groq AI configuration on startup
+    if GROQ_API_KEY:
+        print("✓ Groq API Key configured")
+        try:
+            groq_client = Groq(api_key=GROQ_API_KEY)
+            print("✓ Groq AI initialized successfully")
+        except Exception as e:
+            print(f"✗ Groq AI initialization error: {e}")
+    else:
+        print("⚠ GROQ_API_KEY not found - chatbot will use FAQ fallback only")
+    
     app.run(debug=True)
