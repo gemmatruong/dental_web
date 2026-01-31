@@ -94,14 +94,23 @@
                         </span>
                     </td>
                     <td class="cell-action">
-                        <form method="post" action="/admin/requests/{{ r['id'] }}/status" class="status-form">
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                            <select name="status" class="status-select" onchange="this.form.submit()">
-                                <option value="new" {% if r["status"]=="new" %}selected{% endif %}>New</option>
-                                <option value="contacted" {% if r["status"]=="contacted" %}selected{% endif %}>Contacted</option>
-                                <option value="closed" {% if r["status"]=="closed" %}selected{% endif %}>Closed</option>
-                            </select>
-                        </form>
+                        <div class="action-buttons">
+                            <form method="post" action="/admin/requests/{{ r['id'] }}/status" class="status-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <select name="status" class="status-select" onchange="this.form.submit()">
+                                    <option value="new" {% if r["status"]=="new" %}selected{% endif %}>New</option>
+                                    <option value="contacted" {% if r["status"]=="contacted" %}selected{% endif %}>Contacted</option>
+                                    <option value="closed" {% if r["status"]=="closed" %}selected{% endif %}>Closed</option>
+                                </select>
+                            </form>
+                            <button
+                                class="btn-delete" 
+                                data-id="{{ r['id'] }}" 
+                                data-name="{{ r['name'] }}" 
+                                title="Delete request">
+                                <img width="32" height="32" src="https://img.icons8.com/windows/32/trash.png" alt="trash"/>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             {% endfor %}
@@ -115,6 +124,29 @@
         <p>When patients submit appointment requests, they'll appear here.</p>
     </div>
     {% endif %}
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="modal hidden">
+    <div class="modal-backdrop" onclick="hideDeleteModal()"></div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Confirm Deletion</h2>
+            <button onclick="hideDeleteModal()" class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="warning-icon">⚠️</div>
+            <p id="deleteMessage"></p>
+            <p class="warning-text">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button onclick="hideDeleteModal()" class="btn-cancel">Cancel</button>
+            <form id="deleteForm" method="post" style="display: inline;">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn-confirm-delete">Delete Request</button>
+            </form>
+        </div>
+    </div>
 </div>
 
 {% endblock %}
