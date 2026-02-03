@@ -1,19 +1,20 @@
 # imports
-import json
 import os
-from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort, send_from_directory, current_app
-from dotenv import load_dotenv
-from db import init_db, get_conn
-from pathlib import Path
-from werkzeug.utils import secure_filename
-from werkzeug.security import check_password_hash
+import json
 import time
-from pdf_tools import fill_pdf
-from datetime import datetime, timedelta
-from flask_wtf.csrf import CSRFProtect
 import logging
 from groq import Groq
+from pathlib import Path
 from functools import wraps
+from pdf_tools import fill_pdf
+from dotenv import load_dotenv
+from db import init_db, get_conn
+from flask_mail import Mail, Message
+from flask_wtf.csrf import CSRFProtect
+from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
+from werkzeug.security import check_password_hash
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify, abort, send_from_directory, current_app
 
 
 # read .env file (environment file) and get values from it
@@ -21,6 +22,136 @@ load_dotenv()
 
 app = Flask(__name__)
 
+# Email Configuration
+app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.environ.get('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_USE_SSL'] = os.environ.get('MAIL_USE_SSL', 'False') == 'True'
+app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.environ.get('MAIL_DEFAULT_SENDER', app.config['MAIL_USERNAME'])
+
+mail = Mail(app)
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('admin_audit.log'),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+
+# Helper Functions for Email and Security
+def send_password_reset_email(email, token):
+    """Send password reset email"""
+    try:
+        reset_url = url_for('admin_reset_password_get', token=token, _external=True)
+        
+        msg = Message(
+            subject=f"{CLINIC['office_name']} - Password Reset Request",
+            recipients=[email],
+            html=f"""
+            <html>
+                <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                    <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+                        <div style="background: linear-gradient(135deg, #4682B4, #83c9f4); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+                            <h1 style="color: white; margin: 0;">Password Reset Request</h1>
+                        </div>
+                        
+                        <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
+                            <p>Hello,</p>
+                            
+                            <p>We received a request to reset your admin password for <strong>{CLINIC['office_name']}</strong>.</p>
+                            
+                            <p>Click the button below to reset your password:</p>
+                            
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="{reset_url}" 
+                                   style="background: linear-gradient(135deg, #4682B4, #83c9f4); 
+                                          color: white; 
+                                          padding: 15px 40px; 
+                                          text-decoration: none; 
+                                          border-radius: 50px; 
+                                          display: inline-block;
+                                          font-weight: bold;">
+                                    Reset Password
+                                </a>
+                            </div>
+                            
+                            <p>Or copy and paste this link into your browser:</p>
+                            <p style="word-break: break-all; background: white; padding: 10px; border-radius: 5px; font-size: 12px;">
+                                {reset_url}
+                            </p>
+                            
+                            <p style="color: #dc3545; font-weight: bold;">This link will expire in 1 hour.</p>
+                            
+                            <p>If you didn't request this password reset, please ignore this email or contact your system administrator.</p>
+                            
+                            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+                            
+                            <p style="font-size: 12px; color: #666;">
+                                This is an automated message from {CLINIC['office_name']}.<br>
+                                Please do not reply to this email.
+                            </p>
+                        </div>
+                    </div>
+                </body>
+            </html>
+            """
+        )
+        
+        mail.send(msg)
+        logger.info(f"Password reset email sent to {email}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send password reset email to {email}: {str(e)}")
+        return False
+
+def log_admin_action(action, details=""):
+    """Enhanced logging with user agent"""
+    try:
+        with get_conn() as conn:
+            conn.execute("""
+                INSERT INTO admin_audit_log (action, details, ip_address, user_agent)
+                VALUES (?, ?, ?, ?)
+            """, (action, details, request.remote_addr, request.headers.get('User-Agent', 'Unknown')))
+            conn.commit()
+    except Exception as e:
+        logger.error(f"Failed to log admin action: {str(e)}")
+
+def cleanup_expired_tokens():
+    """Remove expired password reset tokens"""
+    try:
+        with get_conn() as conn:
+            result = conn.execute("""
+                DELETE FROM password_reset_tokens 
+                WHERE expires_at < CURRENT_TIMESTAMP OR used = 1
+            """)
+            conn.commit()
+            if result.rowcount > 0:
+                logger.info(f"Cleaned up {result.rowcount} expired/used tokens")
+    except Exception as e:
+        logger.error(f"Failed to cleanup tokens: {str(e)}")
+
+def get_admin_password_hash():
+    """Get admin password hash from database or environment"""
+    try:
+        with get_conn() as conn:
+            row = conn.execute(
+                "SELECT password_hash FROM admin_credentials WHERE id=1"
+            ).fetchone()
+            
+            if row:
+                return row['password_hash']
+    except Exception as e:
+        logger.error(f"Database error getting password hash: {str(e)}")
+    
+    # Fallback to environment variable
+    return os.environ.get("ADMIN_PASSWORD_HASH")
 
 # for later use in image uploads
 UPLOAD_DIR = Path("static/uploads/reviews")
@@ -45,13 +176,14 @@ if GROQ_API_KEY:
 # Turn on CSFR globally protection
 csrf = CSRFProtect(app)
 
-
+# Secure session cookies
 app.config.update(
     SESSION_COOKIE_SECURE=True,       # Only send over HTTPS
     SESSION_COOKIE_HTTPONLY=True,     # Prevent JavaScript access
     SESSION_COOKIE_SAMESITE='Lax',    # CSRF protection
 )
 
+# Load clinic info from JSON
 with open("clinic_info.json", "r", encoding="utf-8") as f:
     CLINIC = json.load(f)   # convert json data into a dict in python
 
@@ -239,7 +371,6 @@ def reviews_page():
 #-------ADMIN AUTH-----------
 #----------------------------
 
-
 def require_admin():
     if not session.get("is_admin"):
         abort(403)
@@ -273,21 +404,26 @@ def admin_login_post():
     # Rate limiting: check failed attempts
     if ip in failed_attempts:
         attempts, last_time = failed_attempts[ip]
-        if attempts >= 5 and time.time() - last_time < 300:  # 5 min lockout
+        if attempts >= 5 and time.time() - last_time < 900:  # 15 min lockout
             return render_template("admin_login.html", clinic=CLINIC, 
                                    error="Too many failed attempts. Try again in 5 minutes.")
     
     # Get HASHED password from environment
-    hashed_pw = os.environ.get("ADMIN_PASSWORD_HASH")
+    stored_hash = get_admin_password_hash()
     
-    if not hashed_pw:
+    if not stored_hash:
         app.logger.error("ADMIN_PASSWORD_HASH not set!")
         abort(500)
     
-    if password and check_password_hash(hashed_pw, password):
+    if password and check_password_hash(stored_hash, password):
         session["is_admin"] = True
+        session["last_activity"] = datetime.now().isoformat()
+        session.permanent = True
+
         # Clear failed attempts on success
         failed_attempts.pop(ip, None)
+
+        log_admin_action("LOGIN_SUCCESS", f"Successful login from {ip}")
         return redirect(url_for("admin_requests"))
     
     # Track failed attempt
@@ -411,13 +547,6 @@ def admin_reviews_upload():
     file.save(dest)
     return redirect(url_for("admin_reviews_get"))
 
-
-# Configure logging
-logging.basicConfig(
-    filename='admin_audit.log',
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
-)
 
 @app.post("/admin/reviews/delete/<filename>")
 def admin_reviews_delete(filename: str):
