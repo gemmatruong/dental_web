@@ -53,7 +53,7 @@ static/uploads/reviews/*
 filled_forms/*
 !filled_forms/.gitkeep
 
-# PostgreSQL local dumps (if you create backups)
+# PostgreSQL local dumps
 *.sql
 *.dump
 
