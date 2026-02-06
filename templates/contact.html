@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Contact & Appointment Request</h1>
+
+{% if error %}
+    <div class="alert">{{ error }}</div>
+{% endif %}
+
+{% if success %}
+    <div class="success">Thanks! We received your request and will contact you soon.</div>
+{% else %}
+<form method="post" class="form">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label>Name* <input name="name" required></label>
+    <label>Phone or Email* <input name="contact" required></label>
+    <label>Preferred days/times* <input name="preferred_times" required placeholder="e.g., Tue afternoon or Fri morning"></label>
+
+    <label>Service*
+        <select name="service" required>
+            <option value="">Select...</option>
+            <option>Cleaning and Exam</option>
+            <option>Deep Cleaning</option>
+            <option>Full Mouth Exam/ Pain Exam</option>
+            <option>Fillings</option>
+            <option>Implant Consultation</option>
+            <option>Denture Consultation</option>
+        </select>
+    </label>
+
+    <label>Notes (optional)
+        <textarea name="note" rows="4" placeholder="Typing notes for us..."></textarea>
+    </label>
+
+    <button class="btn" type="submit">Submit Request</button>
+</form>
+{% endif %}
+{% endblock %}

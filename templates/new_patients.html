@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="np-form">
+  <header class="np-header">
+    <h1>New Patient Information</h1>
+    <p>Please complete this form before your first visit.</p>
+  </header>
+
+  {% if error %}<div class="alert">{{ error }}</div>{% endif %}
+  {% if success %}
+    <div class="success">Thank you! Your form has been submitted.</div>
+  {% else %}
+    <form class="form" method="post" action="{{ url_for('new_patients_submit') }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <div class="form-section">
+        <h2>Patient Information</h2>
+        <div class="three-col">
+          <label>First name* <input name="p_first" required></label>
+          <label>Last name* <input name="p_last" required></label>
+          <label>Middle Initial <input name="p_mi"></label>
+        </div>
+
+        <label>Address <input name="p_address"></label>
+        
+        <div class="three-col">
+          <label>City <input name="p_city"></label>
+          <label>State <input name="p_state"></label>
+          <label>Zip <input name="p_zip"></label>
+        </div>
+
+        <div class="two-col">
+          <label>Cell Phone <input name="p_cell_phone"></label>
+          <label>Alternative cell phone <input name="p_alt_phone"></label>
+        </div>
+
+        <div class="two-col">
+          <label>Sex:
+            <div class="inline-radio">
+              <label><input type="radio" name="p_sex" value="Male"> Male</label>
+              <label><input type="radio" name="p_sex" value="Female"> Female</label>
+            </div>
+          </label>
+
+          <label>Marital Status:
+            <div class="inline-radio">
+              <label><input type="radio" name="p_marital" value="Single"> Single</label>
+              <label><input type="radio" name="p_marital" value="Married"> Married</label>
+              <label><input type="radio" name="p_marital" value="Divorced"> Divorced</label>
+              <label><input type="radio" name="p_marital" value="Separated"> Separated</label>
+              <label><input type="radio" name="p_marital" value="Widowed"> Widowed</label>
+            </div>
+          </label>
+        </div>
+
+        <div class="two-col">
+          <label>Date of Birth <input name="p_dob" placeholder="MM/DD/YYYY"></label>
+          <label>Email <input name="p_email" type="email"></label>
+        </div>
+      </div>
+
+      <div class="form-section">      
+        <h2>Medical History</h2>
+        <label>Have you had any serious illnesses or operations?
+          <div class="inline-radio">
+            <label><input type="radio" name="m_serious" value="Yes"> Yes</label>
+            <label><input type="radio" name="m_serious" value="No"> No</label>
+          </div>
+        </label>
+        <label>If yes, describe <input name="m_serious_desc"></label>
+
+        <label>Do you take, or have you taken, Phen-Fen or Redux?
+          <div class="inline-radio">
+            <label><input type="radio" name="m_phenfen" value="Yes"> Yes</label>
+            <label><input type="radio" name="m_phenfen" value="No"> No</label>
+          </div>
+        </label>
+
+        <h3>Women</h3>
+        <div class="three-col">
+          <label>Pregnant / Trying to get pregnant?
+            <div class="inline-radio">
+              <label><input type="radio" name="w_pregnant" value="Yes"> Yes</label>
+              <label><input type="radio" name="w_pregnant" value="No"> No</label>
+            </div>
+          </label>
+          <label>Taking oral contraceptives?
+            <div class="inline-radio">
+              <label><input type="radio" name="w_ocp" value="Yes"> Yes</label>
+              <label><input type="radio" name="w_ocp" value="No"> No</label>
+            </div>
+          </label>
+          <label>Nursing?
+            <div class="inline-radio">
+              <label><input type="radio" name="w_nursing" value="Yes"> Yes</label>
+              <label><input type="radio" name="w_nursing" value="No"> No</label>
+            </div>
+          </label>
+        </div>
+
+        <h3>Mark all that applies to you</h3>
+        <div class="check-grid">
+          <!-- Health conditions -->
+          {% set conditions = [
+            ("AIDS/HIV +", "health_AIDS"),
+            ("Alzheimer's Disease", "health_Alzheimer"),
+            ("Anemia", "health_Anemia"),
+            ("Arthritis/Gout", "health_Arthritis"),
+            ("Artificial Heart Valve", "health_AHV"),
+            ("Artificial Joint", "health_Artificial-joint"),
+            ("Asthma", "health_Asthma"),
+            ("Blood Disease", "health_Blood-disease"),
+            ("Blood Transfusion", "health_Blood-transfusion"),
+            ("Cancer", "health_Cancer"),
+            ("Chest Pains", "health_Chest-pains"),
+            ("Circulatory Problems", "health_Circulatory-problem"),
+            ("Cortisone Medicine", "health_Cortisone"),
+            ("Diabetes", "health_Diabetes"),
+            ("Epilepsy or Seizures", "health_Epilepsy"),
+            ("Fainting", "health_Fainting"),
+            ("Glaucoma", "health_Glaucoma"),
+            ("Heart Attack/Failure", "health_Heart-attack"),
+            ("Heart Murmur", "health_Heart-murmur"),
+            ("Heart Pacemaker", "health_Heart-pacemaker"),
+            ("Heart Disease", "health_Heart-disease"),
+            ("Hemophilia", "health_Hemophilia"),
+            ("Hepatitis", "health_Hepatitis"),
+            ("High Blood Pressure", "health_HBP"),
+            ("High Cholesterol", "health_HC"),
+            ("Hypoglycemia", "health_Hypoglycemia"),
+            ("Jaw pain / TMJ", "health_TMJ"),
+            ("Kidney Problems", "health_Kidney-problems"),
+            ("Leukemia", "health_Leukemia"),
+            ("Liver Disease", "health_Liver-disease"),
+            ("Low Blood Pressure", "health_LBP"),
+            ("Lung Disease", "health_Lung-disease"),
+            ("Osteoporosis", "health_Osteoporosis"),
+            ("Radiation Treatments", "health_Radiation-treatment"),
+            ("Renal Dialysis", "health_Renal-dialysis"),
+            ("Rheumatic Fever", "health_Rheumatic-fever"),
+            ("Scarlet Fever", "health_Scarlet-fever"),
+            ("Sickle Cell Disease", "health_Sickle-cell"),
+            ("Sinus Trouble", "health_Sinus-trouble"),
+            ("Stroke", "health_Stroke"),
+            ("Thyroid Disease", "health_Thyroid-disease"),
+            ("Tonsillitis", "health_Tonsillitis"),
+            ("Tuberculosis", "health_Tuberculosis"),
+            ("Ulcers", "health_Ulcers")
+          ] %}
+          
+          {% for label, field in conditions %}
+            <label class="check-item">
+              <input type="checkbox" name="m_conditions" value="{{ field }}"> {{ label }}
+            </label>
+          {% endfor %}
+        </div>
+
+        <div class="two-col">
+          <label>List all medications you are currently taking:
+            <textarea name="m_meds" rows="4"></textarea>
+          </label>
+          <label>Allergies:
+            <textarea name="m_allergies" rows="4"></textarea>
+          </label>
+        </div>
+
+        <h3>Medical Signature</h3>
+        <label>Signature of patient/parent/guardian* <input name="sig_med" required></label>
+        <label>Date <input name="sig_med_date" placeholder="MM/DD/YY"></label>
+      </div>
+
+      <div class="form-section">
+        <h2>Insurance Information</h2>
+
+        <label>Do you have any Insurance?</label>
+          <div class="inline-radio">
+            <label><input type="radio" name="pi_has" value="Yes"> Yes</label>
+            <label><input type="radio" name="pi_has" value="No"> No</label>
+          </div>
+
+          <div id="pi_block" style="display:none;">
+              <label>Is the patient the subscriber?
+                  <div class="inline-radio">
+                      <label><input type="radio" name="pi_is_subscriber" value="Yes"> Yes</label>
+                      <label><input type="radio" name="pi_is_subscriber" value="No"> No</label>
+                  </div>
+              </label>
+
+              <div class="two-col">
+                  <label>Insurance Company <input name="pi_company"></label>
+                  <label>Member ID <input name="pi_member_id"></label>
+                  <label>Group # <input name="pi_group"></label>
+              </div>
+
+              <div id="pi_subscriber_block" style="display:none;">
+                  <div class="two-col">
+                      <label>Subscriber Name <input name="pi_subscriber"></label>
+                      <label>Subscriber DOB <input name="pi_dob" placeholder="MM/DD/YYYY"></label>
+                  </div>
+
+                  <label>Relationship to Subscriber
+                      <div class="inline-radio">
+                          <label><input type="radio" name="pi_rel" value="Self"> Self</label>
+                          <label><input type="radio" name="pi_rel" value="Spouse"> Spouse</label>
+                          <label><input type="radio" name="pi_rel" value="Child"> Child</label>
+                          <label><input type="radio" name="pi_rel" value="Other"> Other</label>
+                      </div>
+                  </label>
+              </div>
+          </div>
+
+          <label>Patient's Name <input name="sig_ins_name"></label>
+          <label>Patient's Signature <input name="sig_ins"></label>
+          <label>Date <input name="sig_ins_date" placeholder="MM/DD/YY"></label>
+      </div>
+
+      <div class="form-section">
+        <label>
+            <input type="checkbox" name="agree" required>
+            I have read the policies described and agree to abide by the terms.
+        </label>
+      </div>
+
+        <button class="btn" type="submit">Submit Form</button>
+    </form>
+  {% endif %}
+</section>
+
+<section class="np-notes">
+  <h2>Before Your First Visit</h2>
+  <ul>
+    <li>Please arrive 15 minutes early for your first visit</li>
+    <li>Please bring your ID with you to the appointment.</li>
+    <li>Bring your insurance information (if applicable).</li>
+    <li>Bring a list of current medications (if applicable).</li>
+    <li>{{ clinic.insurance }}</li>
+  </ul>    
+
+
+{% endblock %}

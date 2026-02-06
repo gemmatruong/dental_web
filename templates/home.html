@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+    <h1>General Dentist & Implant Center</h1>
+    <p>We have the team with experienced doctors in implant surgery, skillful hygenists, and favorable staffs.</p>
+    <div class="cta-row">
+        <a class="btn" href="{{ url_for('contact_get') }}">Request Appointment</a>
+        <a class="btn secondary" href="tel:{{ clinic_phone }}">Call {{ clinic.phone }}</a>
+    </div>
+</section>
+
+<!-- About us -->
+<div class="about-us">
+    <h2>About Us</h2>
+    <p>
+        Union Dental Group, built <span><strong>more than 15 years ago</strong></span> with <span><strong>3 different locations</strong></span>, is dedicated 
+        to providing high-quality, compassionate dental care for patients of all ages. Our experienced 
+        team with personalized treatment to ensure comfortable and effective visits for every 
+        single patient. We believe in honest communication, preventive care, and long-term oral health. 
+        From routine cleanings to advanced procedures, we tailor every service to meet your unique needs. 
+        At Union Dental Group, your smile, comfort, and trust are always our top priorities.
+    </p>
+</div>
+
+<!-- Facilities image slider -->
+<section class="image-slider">
+    <div class="slider-wrapper">
+        <div class="facility" tabindex="0">
+            <img 
+                id="facility-1" 
+                src="{{ url_for('static', filename='uploads/images/Union-Dental.webp') }}"
+                alt="Union Dental Group Outside">
+            <img 
+                id="facility-2" 
+                src="{{ url_for('static', filename='uploads/images/front-office.png') }}"
+                alt="Union Dental Group Front Office">
+            <img 
+                id="facility-3" 
+                src="{{ url_for('static', filename='uploads/images/exam-room.png') }}"
+                alt="Union Dental Group Exam Room">
+            <img 
+                id="facility-4" 
+                src="{{ url_for('static', filename='uploads/images/x-rays-room.png') }}"
+                alt="Union Dental Group X-rays Room">
+            <img 
+                id="facility-5" 
+                src="{{ url_for('static', filename='uploads/images/ct-scan.png') }}"
+                alt="Union Dental Group CT Scan machine">
+        </div>
+
+        <div class="slider-nav">
+            <a href="#facility-1"></a>
+            <a href="#facility-2"></a>
+            <a href="#facility-3"></a>
+            <a href="#facility-4"></a>
+            <a href="#facility-5"></a>
+        </div>
+    </div>
+</section>
+
+<!-- Meet our dentists -->
+<section class="meet">
+    <h2>Meet Our Dentists</h2>
+
+    <div class="dentist-grid">
+        {% for d in clinic.dentists %}
+            <div class="dentist-card">
+                <img 
+                    class="dentist-photo"
+                    src="{{ url_for('static', filename='uploads/dentists/' ~d.photo) }}"
+                    alt="Photo of {{ d.name }}"
+                    loading="lazy">
+            </div>
+
+            <div class="dentist-info">
+                <h3>{{ d.name }}{% if d.title %}, {{ d.title }}{% endif %}</h3>
+
+                {% if d.specialties %}
+                    <div class="chips">
+                        {% for s in d.specialties %}
+                            <span class="chip">{{ s }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if d.bio %}
+                    <p>{{ d.bio }}</p>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+<!-- Insurance Info -->
+<section class="insurance">
+    <h2>Insurances</h2>
+    <p>{{ clinic.insurance }}</p>
+    <div class="insurance-info">
+        <img 
+            class="insurance-photo"
+            src="{{ url_for('static', filename='uploads/images/insurance-info.png') }}"
+            alt="PPO insurances"
+        >
+    </div>
+</section>
+
+{% endblock %}
