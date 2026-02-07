@@ -1261,7 +1261,7 @@ button.btn:active {
     letter-spacing: 0.3px;
 }
 
-.admin-form input[type="password"] {
+.admin-form input[type="password"], .admin-form input[type="email"] {
     width: 95%;
     padding: 16px 18px;
     font-size: 16px;
@@ -1272,11 +1272,14 @@ button.btn:active {
     font-family: inherit;
 }
 
-.admin-form input[type="password"]::placeholder {
+.admin-form input[type="password"]::placeholder,
+.admin-form input[type="email"]::placeholder {
     color: #9ab0cc;
 }
 
-.admin-form input[type="password"]:focus {
+.admin-form input[type="password"]:focus,
+.admin-form input[type="email"]:focus 
+{
     outline: none;
     border-color: #4682B4;
     background: #fff;
