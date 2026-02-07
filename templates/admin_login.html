@@ -15,9 +15,15 @@
         <form method="post" class="admin-form">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             
+            <!-- ADD THIS EMAIL FIELD -->
+            <label>
+                <span>Email</span>
+                <input type="email" name="email" required placeholder="admin@example.com" autocomplete="email">
+            </label>
+            
             <label>
                 <span>Password</span>
-                <input type="password" name="password" required autofocus placeholder="Enter password">
+                <input type="password" name="password" required placeholder="Enter password" autocomplete="current-password">
             </label>
             
             <button class="btn admin-btn" type="submit">
@@ -25,6 +31,13 @@
                 <span class="arrow">→</span>
             </button>
         </form>
+        
+        <!-- OPTIONAL: Add forgot password link -->
+        <div style="text-align: center; margin-top: 15px;">
+            <a href="{{ url_for('admin_forgot_password_get') }}" style="color: #4682B4; text-decoration: none; font-size: 14px;">
+                Forgot your password?
+            </a>
+        </div>
     </div>
 </div>
 
