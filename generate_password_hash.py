@@ -24,7 +24,7 @@ def main():
             sys.exit(0)
         
         if len(password) < 8:
-            print("❌ Password must be at least 8 characters long!")
+            print("Password must be at least 8 characters long!")
             print()
             continue
         
@@ -32,7 +32,7 @@ def main():
         confirm = getpass.getpass("Confirm password: ")
         
         if password != confirm:
-            print("❌ Passwords do not match!")
+            print("Passwords do not match!")
             print()
             continue
         
