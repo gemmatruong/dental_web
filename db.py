@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 USE_POSTGRES = DATABASE_URL is not None
 
-# Fix Railway's postgres:// to postgresql://
+# Fix Railway's postgres:// to postgresql:// for psycopg2 compatibility
 if USE_POSTGRES and DATABASE_URL.startswith("postgres://"):
     DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
@@ -44,6 +44,11 @@ def get_conn():
             conn.close()
 
 
+def get_placeholder():
+    """Return the appropriate query placeholder for current database"""
+    return "%s" if USE_POSTGRES else "?"
+
+
 def init_db():
     """Initialize database with all required tables"""
     logger.info(f"Initializing database (PostgreSQL: {USE_POSTGRES})")
@@ -51,7 +56,7 @@ def init_db():
     with get_conn() as conn:
         cursor = conn.cursor()
         
-        # Appointment requests table
+        # Appointment requests table - FIXED SCHEMA
         if USE_POSTGRES:
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS appointment_requests (
@@ -75,6 +80,32 @@ def init_db():
                     service TEXT,
                     note TEXT,
                     status TEXT DEFAULT 'new',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+        
+        # Reviews table (if you need it)
+        if USE_POSTGRES:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS reviews (
+                    id SERIAL PRIMARY KEY,
+                    name VARCHAR(255) NOT NULL,
+                    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+                    review_text TEXT NOT NULL,
+                    image_path VARCHAR(500),
+                    approved BOOLEAN DEFAULT FALSE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            """)
+        else:
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS reviews (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT NOT NULL,
+                    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+                    review_text TEXT NOT NULL,
+                    image_path TEXT,
+                    approved INTEGER DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
             """)
@@ -153,6 +184,8 @@ def init_db():
         try:
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_appointment_status ON appointment_requests(status)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_appointment_created ON appointment_requests(created_at)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_review_approved ON reviews(approved)")
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_review_created ON reviews(created_at)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_reset_token ON password_reset_tokens(token)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_reset_email ON password_reset_tokens(email)")
             cursor.execute("CREATE INDEX IF NOT EXISTS idx_audit_created ON admin_audit_log(created_at)")
@@ -179,24 +212,17 @@ def seed_admin_user():
         with get_conn() as conn:
             cursor = conn.cursor()
             
+            ph = get_placeholder()
+            
             # Check if admin exists
-            if USE_POSTGRES:
-                cursor.execute("SELECT id FROM admin_credentials WHERE email = %s", (admin_email,))
-            else:
-                cursor.execute("SELECT id FROM admin_credentials WHERE email = ?", (admin_email,))
+            cursor.execute(f"SELECT id FROM admin_credentials WHERE email = {ph}", (admin_email,))
             
             if cursor.fetchone() is None:
                 # Create admin user
-                if USE_POSTGRES:
-                    cursor.execute(
-                        "INSERT INTO admin_credentials (email, password_hash) VALUES (%s, %s)",
-                        (admin_email, admin_hash)
-                    )
-                else:
-                    cursor.execute(
-                        "INSERT INTO admin_credentials (email, password_hash) VALUES (?, ?)",
-                        (admin_email, admin_hash)
-                    )
+                cursor.execute(
+                    f"INSERT INTO admin_credentials (email, password_hash) VALUES ({ph}, {ph})",
+                    (admin_email, admin_hash)
+                )
                 conn.commit()
                 logger.info(f"Admin user created: {admin_email}")
             else:
