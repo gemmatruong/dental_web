@@ -157,7 +157,6 @@ python db.py
 flask run
 ```
 
-
 ---
 
 ## 🚀 Deployment (Railway)
@@ -200,8 +199,8 @@ To contribute:
 **Developer:** Gemma Truong  
 **GitHub:** https://github.com/gemmatruong  
 
-**LinkedIn:** *(add link)*  
-**Email:** *(add professional email)*  
+**LinkedIn:** *(https://www.linkedin.com/in/gemmatruong/)*  
+**Email:** *gemmatruong99@gmail.com*  
 
 ---
 
