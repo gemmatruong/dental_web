@@ -73,7 +73,7 @@
             "title": "DDS",
             "specialties": ["Implant Surgery", "Denture", "General Dentistry", "Braces"],
             "bio": "Dr. Kim has years of experience in implant surgery with the admirable number of weekly surgeries. He focuses on patient's satisfaction, comfort, and long-term dental health.",
-            "photo":"dr-kim.jpg"
+            "photo":"Dr-kim.jpg"
         },
         {
             "name": "Dr. Danny Do",
@@ -83,11 +83,18 @@
             "photo":"dr-do.jpg"
         },
         {
-            "name": "Liliana Truong",
+            "name": "Dr. Liliana Truong",
             "title": "DDS",
             "specialties": ["General Dentistry", "Implant Surgery"],
             "bio": "Dr. Truong is passionate about providing high-quality dental care with a gentle touch. She is committed to helping patients achieve optimal oral health and a beautiful smile.",
             "photo":"dr-truong.jpg"
+        },
+        {
+            "name": "Hygenist Jennifer Lee",
+            "title": "RDH",
+            "specialties": ["Hygiene", "Preventive Care"],
+            "bio": "Jennifer is a licensed dental hygienist with over 10 years of experience in preventive dental care. She is dedicated to helping patients maintain healthy teeth and gums through professional cleanings and education.",
+            "photo":"rdh-lee.webp"
         }
     ]
 }
