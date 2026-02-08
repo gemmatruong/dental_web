@@ -73,7 +73,7 @@
             "title": "DDS",
             "specialties": ["Implant Surgery", "Denture", "General Dentistry", "Braces"],
             "bio": "Dr. Kim has years of experience in implant surgery with the admirable number of weekly surgeries. He focuses on patient's satisfaction, comfort, and long-term dental health.",
-            "photo":"dr-kim.webp"
+            "photo":"dr-kim.jpg"
         },
         {
             "name": "Dr. Danny Do",
@@ -81,6 +81,13 @@
             "specialties": ["General Dentistry", "Implant Surgery"],
             "bio": "Dr. Do is dedicated to gentle dentistry and helps patients feel informed and confident in their care. His excellent, gentle, and patient root canal treatment procedure is favorable by many patients",
             "photo":"dr-do.jpg"
+        },
+        {
+            "name": "Liliana Truong",
+            "title": "DDS",
+            "specialties": ["General Dentistry", "Implant Surgery"],
+            "bio": "Dr. Truong is passionate about providing high-quality dental care with a gentle touch. She is committed to helping patients achieve optimal oral health and a beautiful smile.",
+            "photo":"dr-truong.jpg"
         }
     ]
 }
