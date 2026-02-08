@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="row">
+<div class="admin-review-header">
     <h1>Manage Review Images</h1>
     <a class="btn secondary" href="{{ url_for('reviews_page') }}">View Public Page</a>
 </div>
@@ -27,12 +27,18 @@
     <div class="review-grid">
         {% for img in images %}
             <div class="review-card">
-                <img src="{{ url_for('static', filename='uploads/reviews/' ~ img) }}" alt="Review screenshot">
-                <form method="post" action="/admin/reviews/delete/{{ img }}" style="margin-top:10px;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button class="btn tiny" type="submit">Delete</button>
-                </form>
+                <div class="review-media">
+                    <img src="{{ url_for('static', filename='uploads/reviews/' ~ img) }}" alt="Review screenshot">
+                </div>
+
+                <div class="review-form">
+                    <form method="post" action="/admin/reviews/delete/{{ img }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button class="btn tiny" type="submit">Delete</button>
+                    </form>
+                </div>
             </div>
+
         {% endfor %}
     </div>
 {% endif %}
