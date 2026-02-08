@@ -196,16 +196,24 @@ def contact_post():
         
         # Optional: Send notification email to admin
         admin_email = os.environ.get("ADMIN_EMAIL")
-        if admin_email:
-            appointment_data = {
-                'name': name,
-                'contact': contact,
-                'preferred_times': preferred_times,
-                'service': service,
-                'note': note
-            }
-            send_appointment_notification(mail, admin_email, appointment_data, CLINIC)
-        
+        # Around line 200-210 in contact_post function
+        # Optional: Send notification email to admin
+        admin_email = os.environ.get("ADMIN_EMAIL")
+        if admin_email and app.config.get('MAIL_USERNAME'):
+            try:
+                appointment_data = {
+                    'name': name,
+                    'contact': contact,
+                    'preferred_times': preferred_times,
+                    'service': service,
+                    'note': note
+                }
+                send_appointment_notification(mail, admin_email, appointment_data, CLINIC)
+                logger.info(f"Email sent to {admin_email}")
+            except Exception as e:
+                logger.error(f"Email failed (appointment still saved): {e}")
+                # Don't crash - appointment is already in database
+
         return render_template("contact.html", clinic=CLINIC, success=True)
     
     except Exception as e:
@@ -317,6 +325,48 @@ def new_patients_submit():
         # Fill PDF
         fill_pdf(PDF_TEMPLATE, output_pdf, pdf_fields)
         logger.info(f"New patient form created: {output_pdf.name}")
+
+        # After fill_pdf() succeeds
+        fill_pdf(PDF_TEMPLATE, output_pdf, pdf_fields)
+        logger.info(f"New patient form created: {output_pdf.name}")
+
+        # EMAIL THE PDF IMMEDIATELY
+        admin_email = os.environ.get("ADMIN_EMAIL")
+        if admin_email and app.config['MAIL_USERNAME']:
+            try:
+                from flask_mail import Message
+                
+                msg = Message(
+                    subject=f"New Patient Form: {p_first} {p_last}",
+                    sender=app.config['MAIL_DEFAULT_SENDER'],
+                    recipients=[admin_email]
+                )
+                msg.body = f"""
+        New patient form submitted:
+
+        Name: {p_first} {p_last}
+        Date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+
+        PDF form is attached.
+        """
+                
+                # Attach the PDF
+                with open(output_pdf, 'rb') as fp:
+                    msg.attach(
+                        output_pdf.name,
+                        "application/pdf",
+                        fp.read()
+                    )
+                
+                mail.send(msg)
+                logger.info(f"PDF emailed to admin: {output_pdf.name}")
+                
+                # Optional: Delete PDF after sending (save space)
+                output_pdf.unlink()
+                
+            except Exception as e:
+                logger.error(f"Failed to email PDF: {e}")
+                # PDF still exists on server temporarily
 
         return render_template("new_patients.html", clinic=CLINIC, success=True)
 
