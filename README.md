@@ -100,6 +100,7 @@ It was designed to mirror the requirements of modern service-based platforms in 
 ├── filled_forms/              # Generated patient PDF forms
 └── README.md
 
+```
 
 ## 📌 Tech Stack
 
