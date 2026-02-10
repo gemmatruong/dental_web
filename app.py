@@ -601,6 +601,14 @@ def admin_requests():
         """)
         rows = cursor.fetchall()
     
+    # Convert datetime objects to strings for consistent template rendering
+    formatted_rows = []
+    for row in rows:
+        row_dict = dict(row)
+        if isinstance(row_dict.get('created_at'), datetime):
+            row_dict['created_at'] = row_dict['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+        formatted_rows.append(row_dict)
+    
     return render_template("admin_requests.html", clinic=CLINIC, rows=rows)
 
 
