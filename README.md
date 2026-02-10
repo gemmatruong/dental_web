@@ -2,6 +2,15 @@
 
 **A full-stack web application for a dental clinic featuring appointment booking, patient intake forms, an admin dashboard, security best practices, and an AI-powered chatbot.**
 
+🌐 **Live Demo:** https://web-production-2810e.up.railway.app/
+
+🔑 **Demo Admin Access (Read-Only):**  
+    Email: tieuthanhvitamin@gmail.com  
+    Password: hello123
+
+
+## 🖥 Demo Screenshots
+
 ---
 
 ## 🚀 Project Overview
