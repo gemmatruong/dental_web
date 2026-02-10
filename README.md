@@ -8,8 +8,10 @@
     Email: tieuthanhvitamin@gmail.com  
     Password: hello123
 
+## 🎥 Demo Video
 
-## 🖥 Demo Screenshots
+▶️ **Click to watch the demo:**  
+https://drive.google.com/file/d/1TGAeUSw1Qt9nOf6ZAxAgY29w3cIy988r/view?usp=sharing
 
 ---
 
