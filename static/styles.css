@@ -1453,9 +1453,9 @@ button.btn:active {
 }
 
 .requests-table td {
-  padding: 16px 14px;
+  padding: 14px 10px;
   vertical-align: top;
-  font-size: 14px;
+  font-size: 12px;
   color: var(--ink-2);
 }
 
@@ -1464,24 +1464,32 @@ button.btn:active {
 .request-row.status-closed { background: rgba(76, 175, 80, 0.02); opacity: 0.7; }
 
 .cell-date { min-width: 80px; }
-.date-display { font-weight: 600; color: var(--ink-2); }
-.time-display { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.date-display { font-size: 12px; font-weight: 500; color: var(--ink-2); }
+.time-display { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
 .cell-name strong { color: var(--ink-3); font-weight: 700; }
 
 .cell-contact {
   font-family: "Courier New", monospace;
-  font-size: 13px;
-  overflow: auto; /* improved */
-  max-width: 130px;
-  word-break: break-word;
+  font-size: 12px;
+  overflow: auto;
+  max-width: 100px;
+  overflow: hidden;
 }
 
-.cell-times { font-size: 13px; color: var(--muted); max-width: 130px; }
-.cell-note { max-width: 200px; }
+.cell-service { max-width: 100px;}
+
+.cell-times {
+  color: var(--muted); 
+  max-width: 90px; 
+}
+.cell-note { 
+  max-width: 80px; 
+  overflow-x: scroll;
+}
 
 .note-preview {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
   font-style: italic;
   line-height: 1.4;
@@ -1491,17 +1499,17 @@ button.btn:active {
 
 .service-badge {
   display: inline-block;
-  padding: 4px 12px;
+  padding: 4px 6px;
   background: #e8f1fb;
   color: var(--ink-2);
   border-radius: 12px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .status-badge {
   display: inline-block;
-  padding: 6px 12px;
-  border-radius: 999px;
+  padding: 6px 6px;
+  border-radius:999px;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -1527,11 +1535,11 @@ button.btn:active {
 .status-form {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .status-select {
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 8px;
   border: 2px solid var(--border);
   background: #fff;
@@ -1582,10 +1590,9 @@ button.btn:active {
 
 /* Action buttons */
 .action-buttons {
-  display: flex;
-  gap: 8px;
   align-items: center;
-  flex-wrap: wrap;
+  display: flex;
+  gap: 5px;
 }
 
 .btn-delete {
@@ -1596,7 +1603,7 @@ button.btn:active {
   border: none;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 11px;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
@@ -1604,8 +1611,8 @@ button.btn:active {
 }
 
 .btn-delete img {
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 
 .btn-delete:hover {
